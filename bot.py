@@ -33,6 +33,9 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await query.message.reply_text("🎬 Movie Video আসবে এখানে")
 
+    elif query.data == "Collection":
+
+    await query.message.reply_text("Collection জিনিস আসব")
 
 app = Application.builder().token(TOKEN).build()
 
