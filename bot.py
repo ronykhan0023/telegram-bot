@@ -21,26 +21,22 @@ TOKEN = "8971545585:AAHNJGwWJbzgEofYTd5qEJ4CQBpjCXkbksg"
 
 
 # =====================================================
-#                ADMIN USER ID
-# =====================================================
-
-ADMIN_ID = 7727343195
-
-
-# =====================================================
 #               TELEGRAM VIDEO FILE IDs
 # =====================================================
 
+# 🎭 Natok Videos
 NATOK_VIDEOS = [
     "PUT_NATOK_FILE_ID_1",
     "PUT_NATOK_FILE_ID_2"
 ]
 
+# 🎬 Movie Videos
 MOVIE_VIDEOS = [
     "PUT_MOVIE_FILE_ID_1",
     "PUT_MOVIE_FILE_ID_2"
 ]
 
+# 😁 Collection Videos
 COLLECTION_VIDEOS = [
     "PUT_COLLECTION_FILE_ID_1",
     "PUT_COLLECTION_FILE_ID_2"
@@ -59,11 +55,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         [InlineKeyboardButton("🎬 Movie", callback_data="movie_0")],
 
-        [InlineKeyboardButton("😁 Collection", callback_data="collection_0")],
-
-        [InlineKeyboardButton("🔎 Search", callback_data="search")],
-
-        [InlineKeyboardButton("👨‍💻 Admin Panel", callback_data="admin")]
+        [InlineKeyboardButton("😁 Collection", callback_data="collection_0")]
 
     ]
 
@@ -74,14 +66,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 ━━━━━━━━━━━━━━━━━━
 
-🔥 Professional Video Bot
+🔥 Premium Video Collection Bot
 
-✅ Natok
-✅ Movie
-✅ Collection
-✅ Search System
-✅ Next / Previous
-✅ Back Button
+✅ Natok Videos
+✅ Movie Videos
+✅ Collection Videos
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -119,9 +108,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             [InlineKeyboardButton("🎬 Movie", callback_data="movie_0")],
 
-            [InlineKeyboardButton("😁 Collection", callback_data="collection_0")],
-
-            [InlineKeyboardButton("🔎 Search", callback_data="search")]
+            [InlineKeyboardButton("😁 Collection", callback_data="collection_0")]
 
         ]
 
@@ -175,7 +162,9 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_video(
             video=NATOK_VIDEOS[index],
             caption=f"""
-🎭 Natok Collection
+🎭 Bangla Natok Collection
+
+━━━━━━━━━━━━━━━━━━
 
 📁 Video Number: {index+1}
 
@@ -226,6 +215,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             caption=f"""
 🎬 Movie Collection
 
+━━━━━━━━━━━━━━━━━━
+
 📁 Video Number: {index+1}
 
 🍿 Enjoy Your Movie
@@ -275,6 +266,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             caption=f"""
 😁 Collection Videos
 
+━━━━━━━━━━━━━━━━━━
+
 📁 Video Number: {index+1}
 
 🔥 Enjoy Your Collection
@@ -283,76 +276,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-    # =================================================
-    # SEARCH SYSTEM
-    # =================================================
-
-    elif data == "search":
-
-        await query.message.reply_text(
-            """
-🔎 Search System
-
-Movie/Natok Name লিখুন।
-"""
-        )
-
-
-    # =================================================
-    # ADMIN PANEL
-    # =================================================
-
-    elif data == "admin":
-
-        if query.from_user.id != ADMIN_ID:
-
-            await query.message.reply_text(
-                "❌ Only Admin Can Access"
-            )
-
-            return
-
-        await query.message.reply_text(
-            """
-👨‍💻 Admin Panel
-
-✅ Upload Videos
-✅ Delete Videos
-✅ Broadcast Message
-✅ User Statistics
-"""
-        )
-
-
 # =====================================================
-#                  SEARCH SYSTEM
-# =====================================================
-
-async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    text = update.message.text.lower()
-
-    if "movie" in text:
-
-        await update.message.reply_text(
-            "🎬 Movie Found"
-        )
-
-    elif "natok" in text:
-
-        await update.message.reply_text(
-            "🎭 Natok Found"
-        )
-
-    else:
-
-        await update.message.reply_text(
-            "❌ No Result Found"
-        )
-
-
-# =====================================================
-#                FILE ID GETTER SYSTEM
+#               FILE ID GETTER SYSTEM
 # =====================================================
 
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -393,14 +318,6 @@ app.add_handler(
     MessageHandler(
         filters.VIDEO,
         get_file_id
-    )
-)
-
-# Search System
-app.add_handler(
-    MessageHandler(
-        filters.TEXT & ~filters.COMMAND,
-        search
     )
 )
 
