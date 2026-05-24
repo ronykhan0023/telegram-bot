@@ -21,7 +21,7 @@ import json
 #                     BOT TOKEN
 # =====================================================
 
-TOKEN = "8971545585:AAGkzm1tQJvuBIBh-VAsKFFfmsbqTjDKMJ8"
+TOKEN = "8971545585:AAGizsCLT8zZc7txBQYHk6PWN8RazxaYC7A"
 
 # =====================================================
 #               COLLECTION PASSWORD
@@ -100,18 +100,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 🔥 Professional Media Bot
 
-✅ Natok
-✅ Movie
-✅ Collection
-✅ Photos
-✅ Games
-✅ Software
-
-━━━━━━━━━━━━━━━━━━
-
-🔍 Smart Search Enabled
-⚡ Auto Upload Enabled
-🔐 Collection Password Enabled
+✅ Auto Upload
+✅ Smart Search
+✅ Password Collection
+✅ User Counter
+✅ Next / Previous
+✅ Unlimited Upload
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -151,10 +145,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     db = load_database()
 
-    # =================================================
     # BACK BUTTON
-    # =================================================
-
     if data == "back":
 
         keyboard = [
@@ -180,26 +171,16 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=reply_markup
         )
 
-    # =================================================
     # COLLECTION PASSWORD
-    # =================================================
-
     elif data == "collection_lock":
 
         context.user_data["waiting_for_password"] = True
 
         await query.message.reply_text(
-            """
-🔒 Collection Locked
-
-📌 Enter Password
-"""
+            "🔒 Enter Collection Password"
         )
 
-    # =================================================
     # CATEGORY SYSTEM
-    # =================================================
-
     else:
 
         category = data.split("_")[0]
@@ -310,11 +291,7 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup = InlineKeyboardMarkup(keyboard)
 
             await update.message.reply_text(
-                """
-✅ Password Correct
-
-🔓 Collection Unlocked
-""",
+                "✅ Collection Unlocked",
                 reply_markup=reply_markup
             )
 
@@ -326,10 +303,7 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
-    # =================================================
     # SEARCH DATABASE
-    # =================================================
-
     db = load_database()
 
     results = []
@@ -347,10 +321,7 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
                 results.append(media)
 
-    # =================================================
     # NO RESULT
-    # =================================================
-
     if len(results) == 0:
 
         await update.message.reply_text(
@@ -359,14 +330,11 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
-    # =================================================
-    # SEND RESULT
-    # =================================================
-
     await update.message.reply_text(
         f"🔍 Found {len(results)} Result"
     )
 
+    # SEND RESULT
     for media in results:
 
         file_id = media["file_id"]
@@ -375,7 +343,6 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         file_type = media["type"]
 
-        # VIDEO
         if file_type == "video":
 
             await update.message.reply_video(
@@ -383,7 +350,6 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 caption=f"🎬 {title}"
             )
 
-        # PHOTO
         elif file_type == "photo":
 
             await update.message.reply_photo(
@@ -391,7 +357,6 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 caption=f"🖼 {title}"
             )
 
-        # DOCUMENT
         else:
 
             await update.message.reply_document(
@@ -405,7 +370,6 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # VIDEO
     if update.message.video:
 
         file_id = update.message.video.file_id
@@ -414,7 +378,6 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🎬 VIDEO FILE ID 👇\n\n{file_id}"
         )
 
-    # PHOTO
     elif update.message.photo:
 
         file_id = update.message.photo[-1].file_id
@@ -423,7 +386,6 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🖼 PHOTO FILE ID 👇\n\n{file_id}"
         )
 
-    # DOCUMENT
     elif update.message.document:
 
         file_id = update.message.document.file_id
@@ -438,80 +400,76 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    if update.channel_post:
+    try:
+
+        if not update.channel_post:
+            return
 
         db = load_database()
 
-        caption = update.channel_post.caption
+        post = update.channel_post
 
-        if not caption:
-
-            return
-
-        category = "movie"
+        caption = post.caption or "No Title"
 
         lower_caption = caption.lower()
 
-        if "natok" in lower_caption:
+        category = "movie"
 
+        if "natok" in lower_caption:
             category = "natok"
 
         elif "collection" in lower_caption:
-
             category = "collection"
 
         elif "photo" in lower_caption:
-
             category = "photo"
 
         elif "game" in lower_caption:
-
             category = "game"
 
         elif "software" in lower_caption:
-
             category = "software"
 
+        media = None
+
         # VIDEO
-        if update.channel_post.video:
+        if post.video:
 
-            file_id = update.channel_post.video.file_id
-
-            db[category].append({
-
-                "file_id": file_id,
+            media = {
+                "file_id": post.video.file_id,
                 "title": caption,
                 "type": "video"
-
-            })
+            }
 
         # PHOTO
-        elif update.channel_post.photo:
+        elif post.photo:
 
-            file_id = update.channel_post.photo[-1].file_id
-
-            db[category].append({
-
-                "file_id": file_id,
+            media = {
+                "file_id": post.photo[-1].file_id,
                 "title": caption,
                 "type": "photo"
-
-            })
+            }
 
         # DOCUMENT
-        elif update.channel_post.document:
+        elif post.document:
 
-            file_id = update.channel_post.document.file_id
-
-            db[category].append({
-
-                "file_id": file_id,
+            media = {
+                "file_id": post.document.file_id,
                 "title": caption,
                 "type": "document"
+            }
 
-            })
+        if media:
 
-        save_database(db)
+            db[category].append(media)
+
+            save_database(db)
+
+            print(f"✅ Auto Saved In {category}")
+
+    except Exception as e:
+
+        print("AUTO UPLOAD ERROR:", e)
 
 # =====================================================
 #                     MAIN SYSTEM
@@ -525,10 +483,10 @@ app.add_handler(CommandHandler("start", start))
 # USER COUNT
 app.add_handler(CommandHandler("users", users))
 
-# BUTTON
+# BUTTON SYSTEM
 app.add_handler(CallbackQueryHandler(button))
 
-# SEARCH + PASSWORD
+# SEARCH SYSTEM
 app.add_handler(
     MessageHandler(
         filters.TEXT & ~filters.COMMAND,
@@ -557,5 +515,7 @@ app.add_handler(
 print("✅ Advanced Professional Bot Running...")
 
 app.run_polling(
-    allowed_updates=Update.ALL_TYPES
+    drop_pending_updates=True,
+    allowed_updates=Update.ALL_TYPES,
+    close_loop=False
 )
