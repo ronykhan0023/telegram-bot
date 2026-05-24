@@ -16,17 +16,26 @@ TOKEN = "8971545585:AAE-5zg03r0ueBmj1bG4UKxxZGRpsuYktiA"
 
 
 # =====================================================
-#               YOUR TELEGRAM FILE IDs
+#                 TELEGRAM VIDEO FILE IDs
 # =====================================================
 
-# 🎭 Natok Video
-NATOK_VIDEO = "PUT_NATOK_FILE_ID"
+# 🎭 Natok Videos
+NATOK_VIDEO_1 = "PUT_NATOK_FILE_ID"
 
-# 🎬 Movie Video
-MOVIE_VIDEO = "PUT_MOVIE_FILE_ID"
+# 🎬 Movie Videos
+MOVIE_VIDEO_1 = "PUT_MOVIE_FILE_ID"
 
-# 😁 Collection Video
-COLLECTION_VIDEO = "PUT_COLLECTION_FILE_ID"
+# 😁 Collection Videos
+COLLECTION_VIDEO_1 = "PUT_COLLECTION_FILE_ID"
+
+# 📺 Web Series
+SERIES_VIDEO_1 = "PUT_SERIES_FILE_ID"
+
+# 🔥 Trending
+TRENDING_VIDEO_1 = "PUT_TRENDING_FILE_ID"
+
+# 😂 Funny Clips
+FUNNY_VIDEO_1 = "PUT_FUNNY_FILE_ID"
 
 
 # =====================================================
@@ -41,7 +50,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         [InlineKeyboardButton("🎬 Movie", callback_data="movie")],
 
-        [InlineKeyboardButton("😁 Collection", callback_data="collection")]
+        [InlineKeyboardButton("😁 Collection", callback_data="collection")],
+
+        [InlineKeyboardButton("📺 Web Series", callback_data="series")],
+
+        [InlineKeyboardButton("🔥 Trending", callback_data="trending")],
+
+        [InlineKeyboardButton("😂 Funny Clips", callback_data="funny")]
 
     ]
 
@@ -50,9 +65,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = """
 🎬 Welcome To Video Collection 🎬
 
-📁 এখানে সকল ধরনের ভিডিও পাবেন।
+━━━━━━━━━━━━━━━━━━
 
-👇 নিচের অপশন সিলেক্ট করুন
+🔥 Premium Video Collection Bot
+
+✅ Natok
+✅ Movie
+✅ Funny Clips
+✅ Trending Videos
+✅ Web Series
+
+━━━━━━━━━━━━━━━━━━
+
+👇 নিচের Category সিলেক্ট করুন
 """
 
     await update.message.reply_text(
@@ -62,7 +87,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # =====================================================
-#                    BUTTON SYSTEM
+#                  BUTTON SYSTEM
 # =====================================================
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -71,6 +96,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await query.answer()
 
+
     # ==========================================
     # Natok
     # ==========================================
@@ -78,15 +104,22 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if query.data == "natok":
 
         await query.message.reply_video(
-            video=NATOK_VIDEO,
+            video=NATOK_VIDEO_1,
             caption="""
-🎭 Natok Collection
+🎭 Bangla Natok Collection
 
-✅ Bangla Natok
+━━━━━━━━━━━━━━━━━━
+
 ✅ Romantic Natok
 ✅ Funny Natok
+✅ Emotional Natok
+
+━━━━━━━━━━━━━━━━━━
+
+🔥 Enjoy Your Video
 """
         )
+
 
     # ==========================================
     # Movie
@@ -95,15 +128,22 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "movie":
 
         await query.message.reply_video(
-            video=MOVIE_VIDEO,
+            video=MOVIE_VIDEO_1,
             caption="""
 🎬 Movie Collection
+
+━━━━━━━━━━━━━━━━━━
 
 ✅ Bangla Movie
 ✅ Hindi Movie
 ✅ English Movie
+
+━━━━━━━━━━━━━━━━━━
+
+🍿 Enjoy Your Movie
 """
         )
+
 
     # ==========================================
     # Collection
@@ -112,19 +152,97 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "collection":
 
         await query.message.reply_video(
-            video=COLLECTION_VIDEO,
+            video=COLLECTION_VIDEO_1,
             caption="""
 😁 Collection Videos
 
+━━━━━━━━━━━━━━━━━━
+
 ✅ Viral Videos
-✅ Funny Clips
-✅ Trending Videos
+✅ Trending Clips
+✅ Social Videos
+
+━━━━━━━━━━━━━━━━━━
+
+🔥 Enjoy Your Collection
+"""
+        )
+
+
+    # ==========================================
+    # Web Series
+    # ==========================================
+
+    elif query.data == "series":
+
+        await query.message.reply_video(
+            video=SERIES_VIDEO_1,
+            caption="""
+📺 Web Series Collection
+
+━━━━━━━━━━━━━━━━━━
+
+✅ Bangla Series
+✅ Hindi Series
+✅ English Series
+
+━━━━━━━━━━━━━━━━━━
+
+🔥 Enjoy Your Series
+"""
+        )
+
+
+    # ==========================================
+    # Trending
+    # ==========================================
+
+    elif query.data == "trending":
+
+        await query.message.reply_video(
+            video=TRENDING_VIDEO_1,
+            caption="""
+🔥 Trending Videos
+
+━━━━━━━━━━━━━━━━━━
+
+✅ Viral Content
+✅ Trending Reels
+✅ Popular Videos
+
+━━━━━━━━━━━━━━━━━━
+
+🚀 Trending Now
+"""
+        )
+
+
+    # ==========================================
+    # Funny Clips
+    # ==========================================
+
+    elif query.data == "funny":
+
+        await query.message.reply_video(
+            video=FUNNY_VIDEO_1,
+            caption="""
+😂 Funny Clips
+
+━━━━━━━━━━━━━━━━━━
+
+🤣 Meme Videos
+🤣 Funny Clips
+🤣 Comedy Shorts
+
+━━━━━━━━━━━━━━━━━━
+
+😆 Enjoy Fun Time
 """
         )
 
 
 # =====================================================
-#                 FILE ID GETTER SYSTEM
+#               FILE ID GETTER SYSTEM
 # =====================================================
 
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -138,9 +256,16 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"""
 🎬 YOUR VIDEO FILE ID 👇
 
+━━━━━━━━━━━━━━━━━━
+
 {file_id}
+
+━━━━━━━━━━━━━━━━━━
+
+✅ Copy This File ID
 """
         )
+
 
     # Document File ID
     elif update.message.document:
@@ -151,13 +276,19 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"""
 📁 YOUR FILE ID 👇
 
+━━━━━━━━━━━━━━━━━━
+
 {file_id}
+
+━━━━━━━━━━━━━━━━━━
+
+✅ Copy This File ID
 """
         )
 
 
 # =====================================================
-#                      MAIN
+#                     MAIN SYSTEM
 # =====================================================
 
 app = Application.builder().token(TOKEN).build()
@@ -165,7 +296,7 @@ app = Application.builder().token(TOKEN).build()
 # Start Command
 app.add_handler(CommandHandler("start", start))
 
-# Button Click System
+# Button System
 app.add_handler(CallbackQueryHandler(button))
 
 # File ID Getter
@@ -176,6 +307,8 @@ app.add_handler(
     )
 )
 
-print("✅ Video Collection Bot Running...")
+print("✅ Professional Video Collection Bot Running...")
 
 app.run_polling()
+
+
