@@ -14,7 +14,6 @@ from telegram.ext import (
 )
 
 from pymongo import MongoClient
-
 from fuzzywuzzy import fuzz
 
 import os
@@ -26,7 +25,7 @@ import os
 TOKEN = "8971545585:AAGAVBOLz_epIWnWwj1IQT_viSBp2thdumk"
 
 # =====================================================
-#                   MONGODB URL
+#                  MONGODB SYSTEM
 # =====================================================
 
 MONGO_URL = os.getenv("MONGO_URL")
@@ -40,38 +39,32 @@ media_collection = db["media"]
 users_collection = db["users"]
 
 # =====================================================
-#              COLLECTION PASSWORD
+#                COLLECTION PASSWORD
 # =====================================================
 
 COLLECTION_PASSWORD = "20200"
 
 # =====================================================
-#                   SAVE USER
+#                  SAVE USER
 # =====================================================
 
 def save_user(user_id):
 
     exists = users_collection.find_one({
-
         "user_id": user_id
-
     })
 
     if not exists:
 
         users_collection.insert_one({
-
             "user_id": user_id
-
         })
 
 # =====================================================
-#                 START COMMAND
+#                   MAIN MENU
 # =====================================================
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
-    save_user(update.effective_user.id)
+def main_menu():
 
     keyboard = [
 
@@ -89,7 +82,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     ]
 
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    return InlineKeyboardMarkup(keyboard)
+
+# =====================================================
+#                     START
+# =====================================================
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    save_user(update.effective_user.id)
 
     text = """
 🎬 Welcome To Video Collection 🎬
@@ -98,12 +99,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 🔥 Professional MongoDB Bot
 
-✅ Permanent Storage
 ✅ Auto Upload
 ✅ Smart Search
+✅ MongoDB Database
+✅ Permanent Storage
+✅ Next / Previous
 ✅ Password Collection
 ✅ Unlimited Upload
-✅ MongoDB Database
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -114,12 +116,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         text,
 
-        reply_markup=reply_markup
+        reply_markup=main_menu()
 
     )
 
 # =====================================================
-#                  USERS COUNT
+#                  USER COUNT
 # =====================================================
 
 async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -133,7 +135,7 @@ async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 # =====================================================
-#                CATEGORY BUTTON
+#                BUTTON SYSTEM
 # =====================================================
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -150,41 +152,23 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if data == "back":
 
-        keyboard = [
-
-            [InlineKeyboardButton("🎭 Natok", callback_data="natok_0")],
-
-            [InlineKeyboardButton("🎬 Movie", callback_data="movie_0")],
-
-            [InlineKeyboardButton("😁 Collection", callback_data="collection_lock")],
-
-            [InlineKeyboardButton("🖼 Photo", callback_data="photo_0")],
-
-            [InlineKeyboardButton("🎮 Game", callback_data="game_0")],
-
-            [InlineKeyboardButton("💻 Software", callback_data="software_0")]
-
-        ]
-
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
         await query.message.reply_text(
 
             "🔙 Main Menu",
 
-            reply_markup=reply_markup
+            reply_markup=main_menu()
 
         )
 
         return
 
     # =================================================
-    # COLLECTION PASSWORD
+    # COLLECTION LOCK
     # =================================================
 
     if data == "collection_lock":
 
-        context.user_data["waiting_for_password"] = True
+        context.user_data["waiting_password"] = True
 
         await query.message.reply_text(
 
@@ -195,7 +179,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # =================================================
-    # CATEGORY MEDIA
+    # CATEGORY
     # =================================================
 
     category = data.split("_")[0]
@@ -205,9 +189,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     media_list = list(
 
         media_collection.find({
-
             "category": category
-
         })
 
     )
@@ -222,13 +204,19 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
+    if index >= len(media_list):
+
+        index = 0
+
     media = media_list[index]
 
-    keyboard = []
+    buttons = []
+
+    row = []
 
     if index > 0:
 
-        keyboard.append(
+        row.append(
 
             InlineKeyboardButton(
 
@@ -242,7 +230,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if index < len(media_list) - 1:
 
-        keyboard.append(
+        row.append(
 
             InlineKeyboardButton(
 
@@ -254,24 +242,26 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         )
 
-    nav_buttons = [keyboard]
+    if row:
 
-    nav_buttons.append(
+        buttons.append(row)
+
+    buttons.append(
 
         [InlineKeyboardButton("🔙 Back", callback_data="back")]
 
     )
 
-    reply_markup = InlineKeyboardMarkup(nav_buttons)
+    reply_markup = InlineKeyboardMarkup(buttons)
 
     file_id = media["file_id"]
 
     title = media["title"]
 
-    file_type = media["type"]
+    media_type = media["type"]
 
     # VIDEO
-    if file_type == "video":
+    if media_type == "video":
 
         await query.message.reply_video(
 
@@ -284,7 +274,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     # PHOTO
-    elif file_type == "photo":
+    elif media_type == "photo":
 
         await query.message.reply_photo(
 
@@ -310,19 +300,25 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 # =====================================================
-#                SEARCH SYSTEM
+#                 SEARCH SYSTEM
 # =====================================================
 
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    if not update.message:
+        return
+
     text = update.message.text.lower()
 
-    # PASSWORD
-    if context.user_data.get("waiting_for_password"):
+    # =================================================
+    # PASSWORD SYSTEM
+    # =================================================
+
+    if context.user_data.get("waiting_password"):
 
         if text == COLLECTION_PASSWORD:
 
-            context.user_data["waiting_for_password"] = False
+            context.user_data["waiting_password"] = False
 
             keyboard = [
 
@@ -340,13 +336,11 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             ]
 
-            reply_markup = InlineKeyboardMarkup(keyboard)
-
             await update.message.reply_text(
 
                 "✅ Collection Unlocked",
 
-                reply_markup=reply_markup
+                reply_markup=InlineKeyboardMarkup(keyboard)
 
             )
 
@@ -360,7 +354,10 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
-    # SEARCH
+    # =================================================
+    # SEARCH DATABASE
+    # =================================================
+
     media_list = list(media_collection.find())
 
     results = []
@@ -392,6 +389,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
 
         f"🔍 Found {len(results)} Result"
+
     )
 
     for media in results:
@@ -400,9 +398,10 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         title = media["title"]
 
-        file_type = media["type"]
+        media_type = media["type"]
 
-        if file_type == "video":
+        # VIDEO
+        if media_type == "video":
 
             await update.message.reply_video(
 
@@ -412,7 +411,8 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             )
 
-        elif file_type == "photo":
+        # PHOTO
+        elif media_type == "photo":
 
             await update.message.reply_photo(
 
@@ -422,6 +422,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             )
 
+        # DOCUMENT
         else:
 
             await update.message.reply_document(
@@ -438,32 +439,38 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    if not update.message:
+        return
+
+    # VIDEO
     if update.message.video:
 
         await update.message.reply_text(
 
-            update.message.video.file_id
+            f"🎬 VIDEO FILE ID 👇\n\n{update.message.video.file_id}"
 
         )
 
+    # PHOTO
     elif update.message.photo:
 
         await update.message.reply_text(
 
-            update.message.photo[-1].file_id
+            f"🖼 PHOTO FILE ID 👇\n\n{update.message.photo[-1].file_id}"
 
         )
 
+    # DOCUMENT
     elif update.message.document:
 
         await update.message.reply_text(
 
-            update.message.document.file_id
+            f"📁 DOCUMENT FILE ID 👇\n\n{update.message.document.file_id}"
 
         )
 
 # =====================================================
-#                AUTO UPLOAD SYSTEM
+#               AUTO UPLOAD SYSTEM
 # =====================================================
 
 async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -471,7 +478,6 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
 
         if not update.channel_post:
-
             return
 
         post = update.channel_post
@@ -479,6 +485,10 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption = post.caption or "No Title"
 
         lower_caption = caption.lower()
+
+        # =================================================
+        # CATEGORY DETECTION
+        # =================================================
 
         category = "movie"
 
@@ -504,7 +514,10 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         media = None
 
+        # =================================================
         # VIDEO
+        # =================================================
+
         if post.video:
 
             media = {
@@ -519,7 +532,10 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             }
 
+        # =================================================
         # PHOTO
+        # =================================================
+
         elif post.photo:
 
             media = {
@@ -534,7 +550,10 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             }
 
+        # =================================================
         # DOCUMENT
+        # =================================================
+
         elif post.document:
 
             media = {
@@ -549,18 +568,34 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             }
 
+        # =================================================
+        # SAVE TO MONGODB
+        # =================================================
+
         if media:
 
-            media_collection.insert_one(media)
+            exists = media_collection.find_one({
 
-            print(f"✅ Saved In MongoDB → {category}")
+                "file_id": media["file_id"]
+
+            })
+
+            if not exists:
+
+                media_collection.insert_one(media)
+
+                print(f"✅ Saved → {category}")
+
+            else:
+
+                print("⚠ Already Exists")
 
     except Exception as e:
 
         print("AUTO UPLOAD ERROR:", e)
 
 # =====================================================
-#                   MAIN SYSTEM
+#                    MAIN APP
 # =====================================================
 
 app = Application.builder().token(TOKEN).build()
@@ -587,7 +622,7 @@ app.add_handler(
 
 )
 
-# FILE ID
+# FILE ID GETTER
 app.add_handler(
 
     MessageHandler(
