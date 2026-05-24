@@ -31,7 +31,7 @@ NATOK_VIDEOS = [
     {"file_id": "BAACAgQAAxkBAAIBAAFqErtNrxO_Xa2nhb7FRfEBYOsaaQACTBwAAs-BgFADGsLbamWtkzsE", "title": "Bachelor.Point.S05E90"},
     {"file_id": "BAACAgQAAxkBAAIBEWoSw7nuZ95iaTSWQgLSnLULMteTAAJOHAACz4GAUBfOuMfOLPLnOwQ", "title": "Bachelor.Point.S05E91"},
     {"file_id": "BAACAgQAAxkBAAIBGGoSxFAm-wyaGpjRi0TDBXSulCKlAAJQHAACz4GAUEVxWfsSMqrkOwQ", "title": "Bachelor.Point.S05E92"},
-    {"file_id": "BAACAgQAAxkBAAIBGWoSxFBW6Vwa-2yLXav5GZRBeik1AAJRHAACz4GAUGdCq1itsRZsOwQ", "title": "Bachelor.Point.S05E93"
+    {"file_id": "BAACAgQAAxkBAAIBGWoSxFBW6Vwa-2yLXav5GZRBeik1AAJRHAACz4GAUGdCq1itsRZsOwQ", "title": "Bachelor.Point.S05E93",
 ]
 
 # 🎬 MOVIE VIDEOS
