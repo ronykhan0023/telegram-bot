@@ -14,7 +14,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
-        "🔥 Welcome To Gaming Live Bot 🔥",
+        "🎬 Welcome To Video Collection 🎬",
         reply_markup=reply_markup
     )
 
