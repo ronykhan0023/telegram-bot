@@ -23,81 +23,101 @@ TOKEN = "8971545585:AAGAVBOLz_epIWnWwj1IQT_viSBp2thdumk"
 #                 MEDIA DATABASE
 # =====================================================
 
-DATABASE = {
+# 🎭 Natok Videos
+NATOK_VIDEOS = [
 
-    "natok": [
+    {
+        "file_id": "PUT_NATOK_FILE_ID_1",
+        "title": "🌸 Romantic Natok"
+    },
 
-        {
-            "file_id": "PUT_NATOK_FILE_ID",
-            "title": "Bachelor Point Episode 1",
-            "type": "video"
-        }
+    {
+        "file_id": "PUT_NATOK_FILE_ID_2",
+        "title": "😂 Funny Natok"
+    }
 
-    ],
+]
 
-    "movie": [
+# 🎬 Movie Videos
+MOVIE_VIDEOS = [
 
-        {
-            "file_id": "PUT_MOVIE_FILE_ID",
-            "title": "Movie 1",
-            "type": "video"
-        }
+    {
+        "file_id": "PUT_MOVIE_FILE_ID_1",
+        "title": "🔥 Bangla Action Movie"
+    },
 
-    ],
+    {
+        "file_id": "PUT_MOVIE_FILE_ID_2",
+        "title": "❤️ Romantic Movie"
+    }
 
-    "collection": [
+]
 
-        {
-            "file_id": "PUT_COLLECTION_FILE_ID",
-            "title": "Private Collection",
-            "type": "video"
-        }
+# 😁 Collection Videos
+COLLECTION_VIDEOS = [
 
-    ],
+    {
+        "file_id": "PUT_COLLECTION_FILE_ID_1",
+        "title": "🤣 Funny Viral Video"
+    },
 
-    "photo": [
+    {
+        "file_id": "PUT_COLLECTION_FILE_ID_2",
+        "title": "🔥 Trending Collection"
+    }
 
-        {
-            "file_id": "PUT_PHOTO_FILE_ID",
-            "title": "Photo 1",
-            "type": "photo"
-        }
+]
 
-    ],
+# 🖼 Photo Collection
+PHOTO_FILES = [
 
-    "game": [
+    {
+        "file_id": "PUT_PHOTO_FILE_ID_1",
+        "title": "🌄 Beautiful Wallpaper"
+    },
 
-        {
-            "file_id": "PUT_GAME_FILE_ID",
-            "title": "Game 1",
-            "type": "document"
-        }
+    {
+        "file_id": "PUT_PHOTO_FILE_ID_2",
+        "title": "🔥 HD Photo"
+    }
 
-    ],
+]
 
-    "software": [
+# 🎮 Game Files
+GAME_FILES = [
 
-        {
-            "file_id": "PUT_SOFTWARE_FILE_ID",
-            "title": "Software 1",
-            "type": "document"
-        }
+    {
+        "file_id": "PUT_GAME_FILE_ID_1",
+        "title": "🎮 GTA Game"
+    },
 
-    ]
+    {
+        "file_id": "PUT_GAME_FILE_ID_2",
+        "title": "🔥 Android Game"
+    }
 
-}
+]
+
+# 💻 Software Files
+SOFTWARE_FILES = [
+
+    {
+        "file_id": "PUT_SOFTWARE_FILE_ID_1",
+        "title": "💻 Premium Software"
+    },
+
+    {
+        "file_id": "PUT_SOFTWARE_FILE_ID_2",
+        "title": "🔥 Windows Tool"
+    }
+
+]
 
 # =====================================================
-#              COLLECTION PASSWORD
+#                     START MENU
 # =====================================================
 
-COLLECTION_PASSWORD = "20200"
-
-# =====================================================
-#                  MAIN MENU
-# =====================================================
-
-def main_menu():
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     keyboard = [
 
@@ -105,7 +125,7 @@ def main_menu():
 
         [InlineKeyboardButton("🎬 Movie", callback_data="movie_0")],
 
-        [InlineKeyboardButton("🔞 Collection", callback_data="collection_lock")],
+        [InlineKeyboardButton("😁 Collection", callback_data="collection_0")],
 
         [InlineKeyboardButton("🖼 Photo", callback_data="photo_0")],
 
@@ -115,48 +135,34 @@ def main_menu():
 
     ]
 
-    return InlineKeyboardMarkup(keyboard)
-
-# =====================================================
-#                      START
-# =====================================================
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    reply_markup = InlineKeyboardMarkup(keyboard)
 
     text = """
-🎬 Welcome To Media Bot 🎬
+🎬 Welcome To Video Collection 🎬
 
 ━━━━━━━━━━━━━━━━━━
 
-🔥 Premium Entertainment Hub
+🔥 Premium Media Collection Bot
 
-🎭 Natok
-🎬 Movie
-🖼 Photo
-🎮 Game
-💻 Software
-
-━━━━━━━━━━━━━━━━━━
-
-🔍 Search Any Media
-⚡ Fast System
-🚀 Unlimited Media Support
+✅ Natok
+✅ Movie
+✅ Collection
+✅ Photos
+✅ Games
+✅ Software
 
 ━━━━━━━━━━━━━━━━━━
 
-👇 Select Category
+👇 নিচের Category সিলেক্ট করুন
 """
 
     await update.message.reply_text(
-
         text,
-
-        reply_markup=main_menu()
-
+        reply_markup=reply_markup
     )
 
 # =====================================================
-#                    BUTTON SYSTEM
+#                   BUTTON SYSTEM
 # =====================================================
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -167,281 +173,319 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     data = query.data
 
-    # BACK
+    # =================================================
+    # BACK BUTTON
+    # =================================================
+
     if data == "back":
 
-        await query.message.reply_text(
+        keyboard = [
 
+            [InlineKeyboardButton("🎭 Natok", callback_data="natok_0")],
+
+            [InlineKeyboardButton("🎬 Movie", callback_data="movie_0")],
+
+            [InlineKeyboardButton("😁 Collection", callback_data="collection_0")],
+
+            [InlineKeyboardButton("🖼 Photo", callback_data="photo_0")],
+
+            [InlineKeyboardButton("🎮 Game", callback_data="game_0")],
+
+            [InlineKeyboardButton("💻 Software", callback_data="software_0")]
+
+        ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await query.message.reply_text(
             "🔙 Main Menu",
-
-            reply_markup=main_menu()
-
+            reply_markup=reply_markup
         )
 
-        return
+    # =================================================
+    # NATOK SYSTEM
+    # =================================================
 
-    # PASSWORD
-    if data == "collection_lock":
+    elif data.startswith("natok_"):
 
-        context.user_data["waiting_password"] = True
+        index = int(data.split("_")[1])
 
-        await query.message.reply_text(
+        keyboard = []
 
-            "🔒 Enter Collection Password"
+        if index > 0:
 
-        )
-
-        return
-
-    category = data.split("_")[0]
-
-    index = int(data.split("_")[1])
-
-    media_list = DATABASE.get(category, [])
-
-    if len(media_list) == 0:
-
-        await query.message.reply_text(
-
-            "❌ No Media Found"
-
-        )
-
-        return
-
-    media = media_list[index]
-
-    buttons = []
-
-    row = []
-
-    if index > 0:
-
-        row.append(
-
-            InlineKeyboardButton(
-
-                "⏮ Previous",
-
-                callback_data=f"{category}_{index-1}"
-
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏮ Previous",
+                    callback_data=f"natok_{index-1}"
+                )
             )
 
-        )
+        if index < len(NATOK_VIDEOS) - 1:
 
-    if index < len(media_list) - 1:
-
-        row.append(
-
-            InlineKeyboardButton(
-
-                "⏭ Next",
-
-                callback_data=f"{category}_{index+1}"
-
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏭ Next",
+                    callback_data=f"natok_{index+1}"
+                )
             )
 
+        nav_buttons = [keyboard]
+
+        nav_buttons.append(
+            [InlineKeyboardButton("🔙 Back", callback_data="back")]
         )
 
-    if row:
-
-        buttons.append(row)
-
-    buttons.append(
-
-        [InlineKeyboardButton("🔙 Back", callback_data="back")]
-
-    )
-
-    reply_markup = InlineKeyboardMarkup(buttons)
-
-    file_id = media["file_id"]
-
-    title = media["title"]
-
-    media_type = media["type"]
-
-    # VIDEO
-    if media_type == "video":
+        reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_video(
-
-            video=file_id,
-
-            caption=f"🎬 {title}",
-
+            video=NATOK_VIDEOS[index]["file_id"],
+            caption=NATOK_VIDEOS[index]["title"],
             reply_markup=reply_markup
-
         )
 
-    # PHOTO
-    elif media_type == "photo":
+# =====================================================
+# MOVIE SYSTEM
+# =====================================================
+
+    elif data.startswith("movie_"):
+
+        index = int(data.split("_")[1])
+
+        keyboard = []
+
+        if index > 0:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏮ Previous",
+                    callback_data=f"movie_{index-1}"
+                )
+            )
+
+        if index < len(MOVIE_VIDEOS) - 1:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏭ Next",
+                    callback_data=f"movie_{index+1}"
+                )
+            )
+
+        nav_buttons = [keyboard]
+
+        nav_buttons.append(
+            [InlineKeyboardButton("🔙 Back", callback_data="back")]
+        )
+
+        reply_markup = InlineKeyboardMarkup(nav_buttons)
+
+        await query.message.reply_video(
+            video=MOVIE_VIDEOS[index]["file_id"],
+            caption=MOVIE_VIDEOS[index]["title"],
+            reply_markup=reply_markup
+        )
+
+# =====================================================
+# COLLECTION SYSTEM
+# =====================================================
+
+    elif data.startswith("collection_"):
+
+        index = int(data.split("_")[1])
+
+        keyboard = []
+
+        if index > 0:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏮ Previous",
+                    callback_data=f"collection_{index-1}"
+                )
+            )
+
+        if index < len(COLLECTION_VIDEOS) - 1:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏭ Next",
+                    callback_data=f"collection_{index+1}"
+                )
+            )
+
+        nav_buttons = [keyboard]
+
+        nav_buttons.append(
+            [InlineKeyboardButton("🔙 Back", callback_data="back")]
+        )
+
+        reply_markup = InlineKeyboardMarkup(nav_buttons)
+
+        await query.message.reply_video(
+            video=COLLECTION_VIDEOS[index]["file_id"],
+            caption=COLLECTION_VIDEOS[index]["title"],
+            reply_markup=reply_markup
+        )
+
+# =====================================================
+# PHOTO SYSTEM
+# =====================================================
+
+    elif data.startswith("photo_"):
+
+        index = int(data.split("_")[1])
+
+        keyboard = []
+
+        if index > 0:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏮ Previous",
+                    callback_data=f"photo_{index-1}"
+                )
+            )
+
+        if index < len(PHOTO_FILES) - 1:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏭ Next",
+                    callback_data=f"photo_{index+1}"
+                )
+            )
+
+        nav_buttons = [keyboard]
+
+        nav_buttons.append(
+            [InlineKeyboardButton("🔙 Back", callback_data="back")]
+        )
+
+        reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_photo(
-
-            photo=file_id,
-
-            caption=f"🖼 {title}",
-
+            photo=PHOTO_FILES[index]["file_id"],
+            caption=PHOTO_FILES[index]["title"],
             reply_markup=reply_markup
-
         )
 
-    # DOCUMENT
-    else:
+# =====================================================
+# GAME SYSTEM
+# =====================================================
+
+    elif data.startswith("game_"):
+
+        index = int(data.split("_")[1])
+
+        keyboard = []
+
+        if index > 0:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏮ Previous",
+                    callback_data=f"game_{index-1}"
+                )
+            )
+
+        if index < len(GAME_FILES) - 1:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏭ Next",
+                    callback_data=f"game_{index+1}"
+                )
+            )
+
+        nav_buttons = [keyboard]
+
+        nav_buttons.append(
+            [InlineKeyboardButton("🔙 Back", callback_data="back")]
+        )
+
+        reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_document(
-
-            document=file_id,
-
-            caption=f"📁 {title}",
-
+            document=GAME_FILES[index]["file_id"],
+            caption=GAME_FILES[index]["title"],
             reply_markup=reply_markup
-
         )
 
 # =====================================================
-#                  SEARCH SYSTEM
+# SOFTWARE SYSTEM
 # =====================================================
 
-async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    elif data.startswith("software_"):
 
-    text = update.message.text.lower()
+        index = int(data.split("_")[1])
 
-    # PASSWORD SYSTEM
-    if context.user_data.get("waiting_password"):
+        keyboard = []
 
-        if text == COLLECTION_PASSWORD:
+        if index > 0:
 
-            context.user_data["waiting_password"] = False
-
-            keyboard = [
-
-                [
-
-                    InlineKeyboardButton(
-
-                        "🔥 Open Collection",
-
-                        callback_data="collection_0"
-
-                    )
-
-                ]
-
-            ]
-
-            await update.message.reply_text(
-
-                "✅ Collection Unlocked",
-
-                reply_markup=InlineKeyboardMarkup(keyboard)
-
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏮ Previous",
+                    callback_data=f"software_{index-1}"
+                )
             )
 
-        else:
+        if index < len(SOFTWARE_FILES) - 1:
 
-            await update.message.reply_text(
-
-                "❌ Wrong Password"
-
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏭ Next",
+                    callback_data=f"software_{index+1}"
+                )
             )
 
-        return
+        nav_buttons = [keyboard]
 
-    results = []
-
-    for category in DATABASE:
-
-        for media in DATABASE[category]:
-
-            if text in media["title"].lower():
-
-                results.append(media)
-
-    if len(results) == 0:
-
-        await update.message.reply_text(
-
-            "❌ No Result Found"
-
+        nav_buttons.append(
+            [InlineKeyboardButton("🔙 Back", callback_data="back")]
         )
 
-        return
+        reply_markup = InlineKeyboardMarkup(nav_buttons)
 
-    for media in results:
-
-        file_id = media["file_id"]
-
-        title = media["title"]
-
-        media_type = media["type"]
-
-        # VIDEO
-        if media_type == "video":
-
-            await update.message.reply_video(
-
-                video=file_id,
-
-                caption=f"🎬 {title}"
-
-            )
-
-        # PHOTO
-        elif media_type == "photo":
-
-            await update.message.reply_photo(
-
-                photo=file_id,
-
-                caption=f"🖼 {title}"
-
-            )
-
-        # DOCUMENT
-        else:
-
-            await update.message.reply_document(
-
-                document=file_id,
-
-                caption=f"📁 {title}"
-
-            )
+        await query.message.reply_document(
+            document=SOFTWARE_FILES[index]["file_id"],
+            caption=SOFTWARE_FILES[index]["title"],
+            reply_markup=reply_markup
+        )
 
 # =====================================================
-#                FILE ID GETTER
+# FILE ID GETTER
 # =====================================================
 
-async def fileid(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if update.message.video:
 
+        file_id = update.message.video.file_id
+
         await update.message.reply_text(
-
-            f"🎬 VIDEO FILE ID 👇\n\n{update.message.video.file_id}"
-
+            f"🎬 VIDEO FILE ID 👇\n\n{file_id}"
         )
 
     elif update.message.photo:
 
+        file_id = update.message.photo[-1].file_id
+
         await update.message.reply_text(
-
-            f"🖼 PHOTO FILE ID 👇\n\n{update.message.photo[-1].file_id}"
-
+            f"🖼 PHOTO FILE ID 👇\n\n{file_id}"
         )
 
     elif update.message.document:
 
+        file_id = update.message.document.file_id
+
         await update.message.reply_text(
-
-            f"📁 DOCUMENT FILE ID 👇\n\n{update.message.document.file_id}"
-
+            f"📁 DOCUMENT FILE ID 👇\n\n{file_id}"
         )
 
 # =====================================================
-#                     MAIN APP
+# MAIN SYSTEM
 # =====================================================
 
 app = Application.builder().token(TOKEN).build()
@@ -451,33 +495,14 @@ app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button))
 
 app.add_handler(
-
     MessageHandler(
-
-        filters.TEXT & ~filters.COMMAND,
-
-        search
-
-    )
-
-)
-
-app.add_handler(
-
-    MessageHandler(
-
         filters.VIDEO |
-
         filters.PHOTO |
-
         filters.Document.ALL,
-
-        fileid
-
+        get_file_id
     )
-
 )
 
-print("✅ Media Bot Running...")
+print("✅ Professional Media Collection Bot Running...")
 
 app.run_polling()
