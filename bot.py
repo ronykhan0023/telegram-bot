@@ -13,85 +13,59 @@ from telegram.ext import (
     ContextTypes
 )
 
+from fuzzywuzzy import fuzz
+
+import json
+
 # =====================================================
 #                     BOT TOKEN
 # =====================================================
 
 TOKEN = "8971545585:AAHNJGwWJbzgEofYTd5qEJ4CQBpjCXkbksg"
 
+# =====================================================
+#               COLLECTION PASSWORD
+# =====================================================
+
+COLLECTION_PASSWORD = "20200"
 
 # =====================================================
-#                 MEDIA DATABASE
+#                 SAVE USER SYSTEM
 # =====================================================
 
-# 🎭 NATOK VIDEOS
-NATOK_VIDEOS = [
+def save_user(user_id):
 
-    {"file_id": "BAACAgQAAxkBAAPgahK2TYQulqzTJukOW1w0PZipp0gAAkocAALPgYBQSWN5XsFZunU7BA", "title": "Bachelor.Point.S05E89."},
-    {"file_id": "BAACAgQAAxkBAAIBAAFqErtNrxO_Xa2nhb7FRfEBYOsaaQACTBwAAs-BgFADGsLbamWtkzsE", "title": "Bachelor.Point.S05E90"},
-    {"file_id": "BAACAgQAAxkBAAIBEWoSw7nuZ95iaTSWQgLSnLULMteTAAJOHAACz4GAUBfOuMfOLPLnOwQ", "title": "Bachelor.Point.S05E91"},
-    {"file_id": "BAACAgQAAxkBAAIBGGoSxFAm-wyaGpjRi0TDBXSulCKlAAJQHAACz4GAUEVxWfsSMqrkOwQ", "title": "Bachelor.Point.S05E92"},
-    {"file_id": "BAACAgQAAxkBAAIBGWoSxFBW6Vwa-2yLXav5GZRBeik1AAJRHAACz4GAUGdCq1itsRZsOwQ", "title": "Bachelor.Point.S05E93"},
-    {"file_id": "BAACAgQAAxkBAAIBGmoSxFC68TGQ6NyDZl78A1rcvuMAA1QcAALPgYBQtOn34yCAFdY7BA", "title": "Bachelor.Point.S05E94"},
-    {"file_id": "BAACAgQAAxkBAAIBG2oSxFC9d9pn7aNL_w74AddDAAH8qQACVhwAAs-BgFAnhTzQ6o6XqDsE", "title": "Bachelor.Point.S05E95"},
-    {"file_id": "BAACAgQAAxkBAAIBHGoSxFCrfsXUbFVj1DiV-XkOfa8GAAJXHAACz4GAUMJFMqqaWa2iOwQ", "title": "Bachelor.Point.S05E96"},
-]
+    with open("users.json", "r") as file:
 
-# 🎬 MOVIE VIDEOS
-MOVIE_VIDEOS = [
+        users = json.load(file)
 
-    {"file_id": "PUT_MOVIE_FILE_ID_1", "title": "Movie 1"},
-    {"file_id": "PUT_MOVIE_FILE_ID_2", "title": "Movie 2"},
-    {"file_id": "PUT_MOVIE_FILE_ID_3", "title": "Movie 3"},
-    {"file_id": "PUT_MOVIE_FILE_ID_4", "title": "Movie 4"},
-    {"file_id": "PUT_MOVIE_FILE_ID_5", "title": "Movie 5"}
+    if user_id not in users:
 
-]
+        users.append(user_id)
 
-# 😁 COLLECTION VIDEOS
-COLLECTION_VIDEOS = [
+        with open("users.json", "w") as file:
 
-    {"file_id": "PUT_COLLECTION_FILE_ID_1", "title": "Collection 1"},
-    {"file_id": "PUT_COLLECTION_FILE_ID_2", "title": "Collection 2"},
-    {"file_id": "PUT_COLLECTION_FILE_ID_3", "title": "Collection 3"},
-    {"file_id": "PUT_COLLECTION_FILE_ID_4", "title": "Collection 4"},
-    {"file_id": "PUT_COLLECTION_FILE_ID_5", "title": "Collection 5"}
+            json.dump(users, file)
 
-]
+# =====================================================
+#                    LOAD DATABASE
+# =====================================================
 
-# 🖼 PHOTO FILES
-PHOTO_FILES = [
+def load_database():
 
-    {"file_id": "PUT_PHOTO_FILE_ID_1", "title": "Photo 1"},
-    {"file_id": "PUT_PHOTO_FILE_ID_2", "title": "Photo 2"},
-    {"file_id": "PUT_PHOTO_FILE_ID_3", "title": "Photo 3"},
-    {"file_id": "PUT_PHOTO_FILE_ID_4", "title": "Photo 4"},
-    {"file_id": "PUT_PHOTO_FILE_ID_5", "title": "Photo 5"}
+    with open("database.json", "r") as file:
 
-]
+        return json.load(file)
 
-# 🎮 GAME FILES
-GAME_FILES = [
+# =====================================================
+#                    SAVE DATABASE
+# =====================================================
 
-    {"file_id": "PUT_GAME_FILE_ID_1", "title": "Game 1"},
-    {"file_id": "PUT_GAME_FILE_ID_2", "title": "Game 2"},
-    {"file_id": "PUT_GAME_FILE_ID_3", "title": "Game 3"},
-    {"file_id": "PUT_GAME_FILE_ID_4", "title": "Game 4"},
-    {"file_id": "PUT_GAME_FILE_ID_5", "title": "Game 5"}
+def save_database(data):
 
-]
+    with open("database.json", "w") as file:
 
-# 💻 SOFTWARE FILES
-SOFTWARE_FILES = [
-
-    {"file_id": "PUT_SOFTWARE_FILE_ID_1", "title": "Software 1"},
-    {"file_id": "PUT_SOFTWARE_FILE_ID_2", "title": "Software 2"},
-    {"file_id": "PUT_SOFTWARE_FILE_ID_3", "title": "Software 3"},
-    {"file_id": "PUT_SOFTWARE_FILE_ID_4", "title": "Software 4"},
-    {"file_id": "PUT_SOFTWARE_FILE_ID_5", "title": "Software 5"}
-
-]
-
+        json.dump(data, file, indent=4)
 
 # =====================================================
 #                     START MENU
@@ -99,13 +73,15 @@ SOFTWARE_FILES = [
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    save_user(update.effective_user.id)
+
     keyboard = [
 
         [InlineKeyboardButton("🎭 Natok", callback_data="natok_0")],
 
         [InlineKeyboardButton("🎬 Movie", callback_data="movie_0")],
 
-        [InlineKeyboardButton("😁 Collection", callback_data="collection_0")],
+        [InlineKeyboardButton("😁 Collection", callback_data="collection_lock")],
 
         [InlineKeyboardButton("🖼 Photo", callback_data="photo_0")],
 
@@ -122,7 +98,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 ━━━━━━━━━━━━━━━━━━
 
-🔥 Premium Media Collection Bot
+🔥 Professional Media Bot
 
 ✅ Natok
 ✅ Movie
@@ -133,7 +109,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 ━━━━━━━━━━━━━━━━━━
 
-👇 নিচের Category সিলেক্ট করুন
+🔍 Search Supported
+🔐 Password Protected
+⚡ Auto Upload System
+
+━━━━━━━━━━━━━━━━━━
+
+👇 Select Category
 """
 
     await update.message.reply_text(
@@ -141,9 +123,22 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=reply_markup
     )
 
+# =====================================================
+#                     USER COUNT
+# =====================================================
+
+async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    with open("users.json", "r") as file:
+
+        users = json.load(file)
+
+    await update.message.reply_text(
+        f"👥 Total Users: {len(users)}"
+    )
 
 # =====================================================
-#                   BUTTON SYSTEM
+#                    BUTTON SYSTEM
 # =====================================================
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -154,6 +149,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     data = query.data
 
+    db = load_database()
 
     # =================================================
     # BACK BUTTON
@@ -167,7 +163,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             [InlineKeyboardButton("🎬 Movie", callback_data="movie_0")],
 
-            [InlineKeyboardButton("😁 Collection", callback_data="collection_0")],
+            [InlineKeyboardButton("😁 Collection", callback_data="collection_lock")],
 
             [InlineKeyboardButton("🖼 Photo", callback_data="photo_0")],
 
@@ -184,14 +180,43 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=reply_markup
         )
 
+    # =================================================
+    # COLLECTION PASSWORD
+    # =================================================
+
+    elif data == "collection_lock":
+
+        context.user_data["waiting_for_password"] = True
+
+        await query.message.reply_text(
+            """
+🔒 Collection Locked
+
+📌 Enter Password
+"""
+        )
 
     # =================================================
-    # NATOK
+    # CATEGORY SYSTEM
     # =================================================
 
-    elif data.startswith("natok_"):
+    else:
+
+        category = data.split("_")[0]
 
         index = int(data.split("_")[1])
+
+        media_list = db.get(category, [])
+
+        if len(media_list) == 0:
+
+            await query.message.reply_text(
+                "❌ No Media Found"
+            )
+
+            return
+
+        media = media_list[index]
 
         keyboard = []
 
@@ -200,16 +225,16 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             keyboard.append(
                 InlineKeyboardButton(
                     "⏮ Previous",
-                    callback_data=f"natok_{index-1}"
+                    callback_data=f"{category}_{index-1}"
                 )
             )
 
-        if index < len(NATOK_VIDEOS) - 1:
+        if index < len(media_list) - 1:
 
             keyboard.append(
                 InlineKeyboardButton(
                     "⏭ Next",
-                    callback_data=f"natok_{index+1}"
+                    callback_data=f"{category}_{index+1}"
                 )
             )
 
@@ -221,230 +246,163 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         reply_markup = InlineKeyboardMarkup(nav_buttons)
 
-        await query.message.reply_video(
-            video=NATOK_VIDEOS[index]["file_id"],
-            caption=NATOK_VIDEOS[index]["title"],
-            reply_markup=reply_markup
-        )
+        file_id = media["file_id"]
 
+        title = media["title"]
 
-    # =================================================
-    # MOVIE
-    # =================================================
+        file_type = media["type"]
 
-    elif data.startswith("movie_"):
+        # VIDEO
+        if file_type == "video":
 
-        index = int(data.split("_")[1])
-
-        keyboard = []
-
-        if index > 0:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏮ Previous",
-                    callback_data=f"movie_{index-1}"
-                )
+            await query.message.reply_video(
+                video=file_id,
+                caption=f"🎬 {title}",
+                reply_markup=reply_markup
             )
 
-        if index < len(MOVIE_VIDEOS) - 1:
+        # PHOTO
+        elif file_type == "photo":
 
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏭ Next",
-                    callback_data=f"movie_{index+1}"
-                )
+            await query.message.reply_photo(
+                photo=file_id,
+                caption=f"🖼 {title}",
+                reply_markup=reply_markup
             )
 
-        nav_buttons = [keyboard]
+        # DOCUMENT
+        else:
 
-        nav_buttons.append(
-            [InlineKeyboardButton("🔙 Back", callback_data="back")]
-        )
-
-        reply_markup = InlineKeyboardMarkup(nav_buttons)
-
-        await query.message.reply_video(
-            video=MOVIE_VIDEOS[index]["file_id"],
-            caption=MOVIE_VIDEOS[index]["title"],
-            reply_markup=reply_markup
-        )
-
-
-    # =================================================
-    # COLLECTION
-    # =================================================
-
-    elif data.startswith("collection_"):
-
-        index = int(data.split("_")[1])
-
-        keyboard = []
-
-        if index > 0:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏮ Previous",
-                    callback_data=f"collection_{index-1}"
-                )
+            await query.message.reply_document(
+                document=file_id,
+                caption=f"📁 {title}",
+                reply_markup=reply_markup
             )
-
-        if index < len(COLLECTION_VIDEOS) - 1:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏭ Next",
-                    callback_data=f"collection_{index+1}"
-                )
-            )
-
-        nav_buttons = [keyboard]
-
-        nav_buttons.append(
-            [InlineKeyboardButton("🔙 Back", callback_data="back")]
-        )
-
-        reply_markup = InlineKeyboardMarkup(nav_buttons)
-
-        await query.message.reply_video(
-            video=COLLECTION_VIDEOS[index]["file_id"],
-            caption=COLLECTION_VIDEOS[index]["title"],
-            reply_markup=reply_markup
-        )
-
-
-    # =================================================
-    # PHOTO
-    # =================================================
-
-    elif data.startswith("photo_"):
-
-        index = int(data.split("_")[1])
-
-        keyboard = []
-
-        if index > 0:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏮ Previous",
-                    callback_data=f"photo_{index-1}"
-                )
-            )
-
-        if index < len(PHOTO_FILES) - 1:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏭ Next",
-                    callback_data=f"photo_{index+1}"
-                )
-            )
-
-        nav_buttons = [keyboard]
-
-        nav_buttons.append(
-            [InlineKeyboardButton("🔙 Back", callback_data="back")]
-        )
-
-        reply_markup = InlineKeyboardMarkup(nav_buttons)
-
-        await query.message.reply_photo(
-            photo=PHOTO_FILES[index]["file_id"],
-            caption=PHOTO_FILES[index]["title"],
-            reply_markup=reply_markup
-        )
-
-
-    # =================================================
-    # GAME
-    # =================================================
-
-    elif data.startswith("game_"):
-
-        index = int(data.split("_")[1])
-
-        keyboard = []
-
-        if index > 0:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏮ Previous",
-                    callback_data=f"game_{index-1}"
-                )
-            )
-
-        if index < len(GAME_FILES) - 1:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏭ Next",
-                    callback_data=f"game_{index+1}"
-                )
-            )
-
-        nav_buttons = [keyboard]
-
-        nav_buttons.append(
-            [InlineKeyboardButton("🔙 Back", callback_data="back")]
-        )
-
-        reply_markup = InlineKeyboardMarkup(nav_buttons)
-
-        await query.message.reply_document(
-            document=GAME_FILES[index]["file_id"],
-            caption=GAME_FILES[index]["title"],
-            reply_markup=reply_markup
-        )
-
-
-    # =================================================
-    # SOFTWARE
-    # =================================================
-
-    elif data.startswith("software_"):
-
-        index = int(data.split("_")[1])
-
-        keyboard = []
-
-        if index > 0:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏮ Previous",
-                    callback_data=f"software_{index-1}"
-                )
-            )
-
-        if index < len(SOFTWARE_FILES) - 1:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏭ Next",
-                    callback_data=f"software_{index+1}"
-                )
-            )
-
-        nav_buttons = [keyboard]
-
-        nav_buttons.append(
-            [InlineKeyboardButton("🔙 Back", callback_data="back")]
-        )
-
-        reply_markup = InlineKeyboardMarkup(nav_buttons)
-
-        await query.message.reply_document(
-            document=SOFTWARE_FILES[index]["file_id"],
-            caption=SOFTWARE_FILES[index]["title"],
-            reply_markup=reply_markup
-        )
-
 
 # =====================================================
-#               FILE ID GETTER SYSTEM
+#                 SEARCH SYSTEM
+# =====================================================
+
+async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    text = update.message.text.lower()
+
+    # PASSWORD SYSTEM
+    if context.user_data.get("waiting_for_password"):
+
+        password = update.message.text
+
+        if password == COLLECTION_PASSWORD:
+
+            context.user_data["waiting_for_password"] = False
+
+            keyboard = [
+
+                [
+                    InlineKeyboardButton(
+                        "🔥 Open Collection",
+                        callback_data="collection_0"
+                    )
+                ]
+
+            ]
+
+            reply_markup = InlineKeyboardMarkup(keyboard)
+
+            await update.message.reply_text(
+                """
+✅ Password Correct
+
+🔓 Collection Unlocked
+""",
+                reply_markup=reply_markup
+            )
+
+        else:
+
+            await update.message.reply_text(
+                """
+❌ Wrong Password
+"""
+            )
+
+        return
+
+    # =================================================
+    # SEARCH DATABASE
+    # =================================================
+
+    db = load_database()
+
+    results = []
+
+    for category in db:
+
+        for media in db[category]:
+
+            score = fuzz.partial_ratio(
+                text,
+                media["title"].lower()
+            )
+
+            if score > 70:
+
+                results.append(media)
+
+    # =================================================
+    # NO RESULT
+    # =================================================
+
+    if len(results) == 0:
+
+        await update.message.reply_text(
+            "❌ No Result Found"
+        )
+
+        return
+
+    # =================================================
+    # SEND RESULT
+    # =================================================
+
+    await update.message.reply_text(
+        f"🔍 Found {len(results)} Result"
+    )
+
+    for media in results:
+
+        file_id = media["file_id"]
+
+        title = media["title"]
+
+        file_type = media["type"]
+
+        # VIDEO
+        if file_type == "video":
+
+            await update.message.reply_video(
+                video=file_id,
+                caption=f"🎬 {title}"
+            )
+
+        # PHOTO
+        elif file_type == "photo":
+
+            await update.message.reply_photo(
+                photo=file_id,
+                caption=f"🖼 {title}"
+            )
+
+        # DOCUMENT
+        else:
+
+            await update.message.reply_document(
+                document=file_id,
+                caption=f"📁 {title}"
+            )
+
+# =====================================================
+#                FILE ID GETTER
 # =====================================================
 
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -476,6 +434,99 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"📁 DOCUMENT FILE ID 👇\n\n{file_id}"
         )
 
+# =====================================================
+#                AUTO UPLOAD SYSTEM
+# =====================================================
+
+async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    if update.channel_post:
+
+        db = load_database()
+
+        caption = update.channel_post.caption
+
+        if not caption:
+
+            return
+
+        # =================================================
+        # CATEGORY DETECT
+        # =================================================
+
+        category = "movie"
+
+        lower_caption = caption.lower()
+
+        if "natok" in lower_caption:
+
+            category = "natok"
+
+        elif "collection" in lower_caption:
+
+            category = "collection"
+
+        elif "photo" in lower_caption:
+
+            category = "photo"
+
+        elif "game" in lower_caption:
+
+            category = "game"
+
+        elif "software" in lower_caption:
+
+            category = "software"
+
+        # =================================================
+        # VIDEO
+        # =================================================
+
+        if update.channel_post.video:
+
+            file_id = update.channel_post.video.file_id
+
+            db[category].append({
+
+                "file_id": file_id,
+                "title": caption,
+                "type": "video"
+
+            })
+
+        # =================================================
+        # PHOTO
+        # =================================================
+
+        elif update.channel_post.photo:
+
+            file_id = update.channel_post.photo[-1].file_id
+
+            db[category].append({
+
+                "file_id": file_id,
+                "title": caption,
+                "type": "photo"
+
+            })
+
+        # =================================================
+        # DOCUMENT
+        # =================================================
+
+        elif update.channel_post.document:
+
+            file_id = update.channel_post.document.file_id
+
+            db[category].append({
+
+                "file_id": file_id,
+                "title": caption,
+                "type": "document"
+
+            })
+
+        save_database(db)
 
 # =====================================================
 #                     MAIN SYSTEM
@@ -483,11 +534,22 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 app = Application.builder().token(TOKEN).build()
 
-# START COMMAND
+# START
 app.add_handler(CommandHandler("start", start))
 
-# BUTTON SYSTEM
+# USER COUNT
+app.add_handler(CommandHandler("users", users))
+
+# BUTTON
 app.add_handler(CallbackQueryHandler(button))
+
+# SEARCH + PASSWORD
+app.add_handler(
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        search_system
+    )
+)
 
 # FILE ID GETTER
 app.add_handler(
@@ -499,6 +561,14 @@ app.add_handler(
     )
 )
 
-print("✅ Professional Media Collection Bot Running...")
+# AUTO UPLOAD
+app.add_handler(
+    MessageHandler(
+        filters.UpdateType.CHANNEL_POST,
+        auto_upload
+    )
+)
+
+print("✅ Advanced Professional Bot Running...")
 
 app.run_polling()
