@@ -27,7 +27,7 @@ TOKEN = "8971545585:AAHNJGwWJbzgEofYTd5qEJ4CQBpjCXkbksg"
 # 🎭 NATOK VIDEOS
 NATOK_VIDEOS = [
 
-    {"file_id": "PUT_NATOK_FILE_ID_1", "title": "Natok 1"},
+    {"file_id": "BAACAgQAAxkBAAPgahK2TYQulqzTJukOW1w0PZipp0gAAkocAALPgYBQSWN5XsFZunU7BA", "Bachelor.Point.S05E89.": "Natok 1"},
     {"file_id": "PUT_NATOK_FILE_ID_2", "title": "Natok 2"},
     {"file_id": "PUT_NATOK_FILE_ID_3", "title": "Natok 3"},
     {"file_id": "PUT_NATOK_FILE_ID_4", "title": "Natok 4"},
