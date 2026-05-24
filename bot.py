@@ -20,7 +20,7 @@ TOKEN = "8971545585:AAE-5zg03r0ueBmj1bG4UKxxZGRpsuYktiA"
 # =====================================================
 
 # 🎭 Natok Videos
-NATOK_VIDEO_1 = "PUT_NATOK_FILE_ID"
+NATOK_VIDEO_1 = "BAACAgUAAxkBAANoahKmHlRP0spt7QABOw1ubCCM3x4BAAJYJwACiJSZVIOJY7Za9wEKOwQ"
 
 # 🎬 Movie Videos
 MOVIE_VIDEO_1 = "PUT_MOVIE_FILE_ID"
