@@ -52,14 +52,19 @@ DATABASE = {
     "movie": [
 
         {
-            "file_id": "PUT_MOVIE_FILE_ID_1",
-            "title": "Bangla Action Movie",
+            "file_id": "BAACAgQAAxkBAAICI2oTDgt7xzYq-JsK5ug8-fZkk9FwAAIFHwACEXp5UE4b9rHtyTAeOwQ",
+            "title": "Prince Movie 2026",
             "type": "video"
         },
 
         {
-            "file_id": "PUT_MOVIE_FILE_ID_2",
-            "title": "Romantic Movie",
+            "file_id": "BAACAgQAAxkBAAICJWoTDiARNUay6SvChYHP0hdrUhcOAAJoGgACUOkZUYY9J1psrdFWOwQ",
+            "title": "Supar Man 2025 Bangla",
+            "type": "video"
+        }
+ {
+            "file_id": "BAACAgEAAxkBAAICJ2oTDjgZze1yUuWdwbiSVZ0wqcw9AALBBgAC8kbpR6d71xSqa9BkOwQ",
+            "title": "Nat Boltu Vuter Bari",
             "type": "video"
         }
 
