@@ -36,8 +36,8 @@ DATABASE = {
     "natok": [
 
         {
-            "file_id": "PUT_NATOK_FILE_ID_1",
-            "title": "Bachelor Point Episode 1",
+            "file_id": "BAACAgQAAxkBAAICimoTGVa54DPeYC7eCJrjCeUZajODAALHHAACr4QJUuQ74TwPCnlrOwQ",
+            "title": "Love Sitter 2026 Natok",
             "type": "video"
         },
 
