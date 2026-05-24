@@ -13,8 +13,6 @@ from telegram.ext import (
     ContextTypes
 )
 
-from fuzzywuzzy import fuzz
-
 # =====================================================
 #                     BOT TOKEN
 # =====================================================
@@ -51,7 +49,7 @@ DATABASE = {
 
         {
             "file_id": "PUT_COLLECTION_FILE_ID",
-            "title": "Private Video",
+            "title": "Private Collection",
             "type": "video"
         }
 
@@ -90,7 +88,7 @@ DATABASE = {
 }
 
 # =====================================================
-#               COLLECTION PASSWORD
+#              COLLECTION PASSWORD
 # =====================================================
 
 COLLECTION_PASSWORD = "20200"
@@ -140,8 +138,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 ━━━━━━━━━━━━━━━━━━
 
-🔍 Smart Search Enabled
-⚡ Fast Media System
+🔍 Search Any Media
+⚡ Fast System
 🚀 Unlimited Media Support
 
 ━━━━━━━━━━━━━━━━━━
@@ -310,7 +308,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text.lower()
 
-    # PASSWORD
+    # PASSWORD SYSTEM
     if context.user_data.get("waiting_password"):
 
         if text == COLLECTION_PASSWORD:
@@ -357,15 +355,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         for media in DATABASE[category]:
 
-            score = fuzz.partial_ratio(
-
-                text,
-
-                media["title"].lower()
-
-            )
-
-            if score > 70:
+            if text in media["title"].lower():
 
                 results.append(media)
 
@@ -387,6 +377,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         media_type = media["type"]
 
+        # VIDEO
         if media_type == "video":
 
             await update.message.reply_video(
@@ -397,6 +388,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             )
 
+        # PHOTO
         elif media_type == "photo":
 
             await update.message.reply_photo(
@@ -407,6 +399,7 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             )
 
+        # DOCUMENT
         else:
 
             await update.message.reply_document(
@@ -427,7 +420,7 @@ async def fileid(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(
 
-            update.message.video.file_id
+            f"🎬 VIDEO FILE ID 👇\n\n{update.message.video.file_id}"
 
         )
 
@@ -435,7 +428,7 @@ async def fileid(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(
 
-            update.message.photo[-1].file_id
+            f"🖼 PHOTO FILE ID 👇\n\n{update.message.photo[-1].file_id}"
 
         )
 
@@ -443,7 +436,7 @@ async def fileid(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(
 
-            update.message.document.file_id
+            f"📁 DOCUMENT FILE ID 👇\n\n{update.message.document.file_id}"
 
         )
 
@@ -487,4 +480,4 @@ app.add_handler(
 
 print("✅ Media Bot Running...")
 
-app.run_polling(drop_pending_updates=True)
+app.run_polling()
