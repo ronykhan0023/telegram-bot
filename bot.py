@@ -21,48 +21,78 @@ TOKEN = "8971545585:AAHNJGwWJbzgEofYTd5qEJ4CQBpjCXkbksg"
 
 
 # =====================================================
-#               TELEGRAM FILE DATABASE
+#                 MEDIA DATABASE
 # =====================================================
 
-# 🎭 Natok Videos
+# 🎭 NATOK VIDEOS
 NATOK_VIDEOS = [
-    "BAACAgQAAxkBAAPgahK2TYQulqzTJukOW1w0PZipp0gAAkocAALPgYBQSWN5XsFZunU7BA",
-    "PUT_NATOK_FILE_ID_2"
+
+    {"file_id": "PUT_NATOK_FILE_ID_1", "title": "Natok 1"},
+    {"file_id": "PUT_NATOK_FILE_ID_2", "title": "Natok 2"},
+    {"file_id": "PUT_NATOK_FILE_ID_3", "title": "Natok 3"},
+    {"file_id": "PUT_NATOK_FILE_ID_4", "title": "Natok 4"},
+    {"file_id": "PUT_NATOK_FILE_ID_5", "title": "Natok 5"}
+
 ]
 
-# 🎬 Movie Videos
+# 🎬 MOVIE VIDEOS
 MOVIE_VIDEOS = [
-    "PUT_MOVIE_FILE_ID_1",
-    "PUT_MOVIE_FILE_ID_2"
+
+    {"file_id": "PUT_MOVIE_FILE_ID_1", "title": "Movie 1"},
+    {"file_id": "PUT_MOVIE_FILE_ID_2", "title": "Movie 2"},
+    {"file_id": "PUT_MOVIE_FILE_ID_3", "title": "Movie 3"},
+    {"file_id": "PUT_MOVIE_FILE_ID_4", "title": "Movie 4"},
+    {"file_id": "PUT_MOVIE_FILE_ID_5", "title": "Movie 5"}
+
 ]
 
-# 😁 Collection Videos
+# 😁 COLLECTION VIDEOS
 COLLECTION_VIDEOS = [
-    "Put video id",
-    "PUT_COLLECTION_FILE_ID_2"
+
+    {"file_id": "PUT_COLLECTION_FILE_ID_1", "title": "Collection 1"},
+    {"file_id": "PUT_COLLECTION_FILE_ID_2", "title": "Collection 2"},
+    {"file_id": "PUT_COLLECTION_FILE_ID_3", "title": "Collection 3"},
+    {"file_id": "PUT_COLLECTION_FILE_ID_4", "title": "Collection 4"},
+    {"file_id": "PUT_COLLECTION_FILE_ID_5", "title": "Collection 5"}
+
 ]
 
-# 🖼 Photo Collection
+# 🖼 PHOTO FILES
 PHOTO_FILES = [
-    "PUT_PHOTO_FILE_ID_1",
-    "PUT_PHOTO_FILE_ID_2"
+
+    {"file_id": "PUT_PHOTO_FILE_ID_1", "title": "Photo 1"},
+    {"file_id": "PUT_PHOTO_FILE_ID_2", "title": "Photo 2"},
+    {"file_id": "PUT_PHOTO_FILE_ID_3", "title": "Photo 3"},
+    {"file_id": "PUT_PHOTO_FILE_ID_4", "title": "Photo 4"},
+    {"file_id": "PUT_PHOTO_FILE_ID_5", "title": "Photo 5"}
+
 ]
 
-# 🎮 Game Files
+# 🎮 GAME FILES
 GAME_FILES = [
-    "PUT_GAME_FILE_ID_1",
-    "PUT_GAME_FILE_ID_2"
+
+    {"file_id": "PUT_GAME_FILE_ID_1", "title": "Game 1"},
+    {"file_id": "PUT_GAME_FILE_ID_2", "title": "Game 2"},
+    {"file_id": "PUT_GAME_FILE_ID_3", "title": "Game 3"},
+    {"file_id": "PUT_GAME_FILE_ID_4", "title": "Game 4"},
+    {"file_id": "PUT_GAME_FILE_ID_5", "title": "Game 5"}
+
 ]
 
-# 💻 Software Files
+# 💻 SOFTWARE FILES
 SOFTWARE_FILES = [
-    "PUT_SOFTWARE_FILE_ID_1",
-    "PUT_SOFTWARE_FILE_ID_2"
+
+    {"file_id": "PUT_SOFTWARE_FILE_ID_1", "title": "Software 1"},
+    {"file_id": "PUT_SOFTWARE_FILE_ID_2", "title": "Software 2"},
+    {"file_id": "PUT_SOFTWARE_FILE_ID_3", "title": "Software 3"},
+    {"file_id": "PUT_SOFTWARE_FILE_ID_4", "title": "Software 4"},
+    {"file_id": "PUT_SOFTWARE_FILE_ID_5", "title": "Software 5"}
+
 ]
 
 
 # =====================================================
-#                  START COMMAND
+#                     START MENU
 # =====================================================
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -111,7 +141,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # =====================================================
-#                    BUTTON SYSTEM
+#                   BUTTON SYSTEM
 # =====================================================
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -154,7 +184,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
     # =================================================
-    # NATOK VIDEOS
+    # NATOK
     # =================================================
 
     elif data.startswith("natok_"):
@@ -190,14 +220,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_video(
-            video=NATOK_VIDEOS[index],
-            caption=f"🎭 Natok Video {index+1}",
+            video=NATOK_VIDEOS[index]["file_id"],
+            caption=NATOK_VIDEOS[index]["title"],
             reply_markup=reply_markup
         )
 
 
     # =================================================
-    # MOVIE VIDEOS
+    # MOVIE
     # =================================================
 
     elif data.startswith("movie_"):
@@ -233,14 +263,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_video(
-            video=MOVIE_VIDEOS[index],
-            caption=f"🎬 Movie Video {index+1}",
+            video=MOVIE_VIDEOS[index]["file_id"],
+            caption=MOVIE_VIDEOS[index]["title"],
             reply_markup=reply_markup
         )
 
 
     # =================================================
-    # COLLECTION VIDEOS
+    # COLLECTION
     # =================================================
 
     elif data.startswith("collection_"):
@@ -276,14 +306,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_video(
-            video=COLLECTION_VIDEOS[index],
-            caption=f"😁 Collection Video {index+1}",
+            video=COLLECTION_VIDEOS[index]["file_id"],
+            caption=COLLECTION_VIDEOS[index]["title"],
             reply_markup=reply_markup
         )
 
 
     # =================================================
-    # PHOTO SYSTEM
+    # PHOTO
     # =================================================
 
     elif data.startswith("photo_"):
@@ -319,14 +349,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_photo(
-            photo=PHOTO_FILES[index],
-            caption=f"🖼 Photo {index+1}",
+            photo=PHOTO_FILES[index]["file_id"],
+            caption=PHOTO_FILES[index]["title"],
             reply_markup=reply_markup
         )
 
 
     # =================================================
-    # GAME FILE SYSTEM
+    # GAME
     # =================================================
 
     elif data.startswith("game_"):
@@ -362,14 +392,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_document(
-            document=GAME_FILES[index],
-            caption=f"🎮 Game File {index+1}",
+            document=GAME_FILES[index]["file_id"],
+            caption=GAME_FILES[index]["title"],
             reply_markup=reply_markup
         )
 
 
     # =================================================
-    # SOFTWARE FILE SYSTEM
+    # SOFTWARE
     # =================================================
 
     elif data.startswith("software_"):
@@ -405,8 +435,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_document(
-            document=SOFTWARE_FILES[index],
-            caption=f"💻 Software File {index+1}",
+            document=SOFTWARE_FILES[index]["file_id"],
+            caption=SOFTWARE_FILES[index]["title"],
             reply_markup=reply_markup
         )
 
@@ -417,7 +447,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # VIDEO FILE ID
+    # VIDEO
     if update.message.video:
 
         file_id = update.message.video.file_id
@@ -426,7 +456,7 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🎬 VIDEO FILE ID 👇\n\n{file_id}"
         )
 
-    # PHOTO FILE ID
+    # PHOTO
     elif update.message.photo:
 
         file_id = update.message.photo[-1].file_id
@@ -435,7 +465,7 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"🖼 PHOTO FILE ID 👇\n\n{file_id}"
         )
 
-    # DOCUMENT FILE ID
+    # DOCUMENT
     elif update.message.document:
 
         file_id = update.message.document.file_id
@@ -451,13 +481,13 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 app = Application.builder().token(TOKEN).build()
 
-# Start Command
+# START COMMAND
 app.add_handler(CommandHandler("start", start))
 
-# Button System
+# BUTTON SYSTEM
 app.add_handler(CallbackQueryHandler(button))
 
-# File ID Getter
+# FILE ID GETTER
 app.add_handler(
     MessageHandler(
         filters.VIDEO |
