@@ -13,9 +13,11 @@ from telegram.ext import (
     ContextTypes
 )
 
+from pymongo import MongoClient
+
 from fuzzywuzzy import fuzz
 
-import json
+import os
 
 # =====================================================
 #                     BOT TOKEN
@@ -24,51 +26,47 @@ import json
 TOKEN = "8971545585:AAGAVBOLz_epIWnWwj1IQT_viSBp2thdumk"
 
 # =====================================================
-#               COLLECTION PASSWORD
+#                   MONGODB URL
+# =====================================================
+
+MONGO_URL = os.getenv("MONGO_URL")
+
+client = MongoClient(MONGO_URL)
+
+db = client["telegram_bot"]
+
+media_collection = db["media"]
+
+users_collection = db["users"]
+
+# =====================================================
+#              COLLECTION PASSWORD
 # =====================================================
 
 COLLECTION_PASSWORD = "20200"
 
 # =====================================================
-#                 SAVE USER SYSTEM
+#                   SAVE USER
 # =====================================================
 
 def save_user(user_id):
 
-    with open("users.json", "r") as file:
+    exists = users_collection.find_one({
 
-        users = json.load(file)
+        "user_id": user_id
 
-    if user_id not in users:
+    })
 
-        users.append(user_id)
+    if not exists:
 
-        with open("users.json", "w") as file:
+        users_collection.insert_one({
 
-            json.dump(users, file)
+            "user_id": user_id
 
-# =====================================================
-#                    LOAD DATABASE
-# =====================================================
-
-def load_database():
-
-    with open("database.json", "r") as file:
-
-        return json.load(file)
+        })
 
 # =====================================================
-#                    SAVE DATABASE
-# =====================================================
-
-def save_database(data):
-
-    with open("database.json", "w") as file:
-
-        json.dump(data, file, indent=4)
-
-# =====================================================
-#                     START MENU
+#                 START COMMAND
 # =====================================================
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -98,14 +96,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 ━━━━━━━━━━━━━━━━━━
 
-🔥 Professional Media Bot
+🔥 Professional MongoDB Bot
 
+✅ Permanent Storage
 ✅ Auto Upload
 ✅ Smart Search
 ✅ Password Collection
-✅ User Counter
-✅ Next / Previous
 ✅ Unlimited Upload
+✅ MongoDB Database
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -113,26 +111,29 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 """
 
     await update.message.reply_text(
+
         text,
+
         reply_markup=reply_markup
+
     )
 
 # =====================================================
-#                     USER COUNT
+#                  USERS COUNT
 # =====================================================
 
 async def users(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    with open("users.json", "r") as file:
-
-        users = json.load(file)
+    total_users = users_collection.count_documents({})
 
     await update.message.reply_text(
-        f"👥 Total Users: {len(users)}"
+
+        f"👥 Total Users: {total_users}"
+
     )
 
 # =====================================================
-#                    BUTTON SYSTEM
+#                CATEGORY BUTTON
 # =====================================================
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -143,9 +144,10 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     data = query.data
 
-    db = load_database()
-
+    # =================================================
     # BACK BUTTON
+    # =================================================
+
     if data == "back":
 
         keyboard = [
@@ -167,123 +169,173 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup = InlineKeyboardMarkup(keyboard)
 
         await query.message.reply_text(
+
             "🔙 Main Menu",
+
             reply_markup=reply_markup
+
         )
 
+        return
+
+    # =================================================
     # COLLECTION PASSWORD
-    elif data == "collection_lock":
+    # =================================================
+
+    if data == "collection_lock":
 
         context.user_data["waiting_for_password"] = True
 
         await query.message.reply_text(
+
             "🔒 Enter Collection Password"
+
         )
 
-    # CATEGORY SYSTEM
+        return
+
+    # =================================================
+    # CATEGORY MEDIA
+    # =================================================
+
+    category = data.split("_")[0]
+
+    index = int(data.split("_")[1])
+
+    media_list = list(
+
+        media_collection.find({
+
+            "category": category
+
+        })
+
+    )
+
+    if len(media_list) == 0:
+
+        await query.message.reply_text(
+
+            "❌ No Media Found"
+
+        )
+
+        return
+
+    media = media_list[index]
+
+    keyboard = []
+
+    if index > 0:
+
+        keyboard.append(
+
+            InlineKeyboardButton(
+
+                "⏮ Previous",
+
+                callback_data=f"{category}_{index-1}"
+
+            )
+
+        )
+
+    if index < len(media_list) - 1:
+
+        keyboard.append(
+
+            InlineKeyboardButton(
+
+                "⏭ Next",
+
+                callback_data=f"{category}_{index+1}"
+
+            )
+
+        )
+
+    nav_buttons = [keyboard]
+
+    nav_buttons.append(
+
+        [InlineKeyboardButton("🔙 Back", callback_data="back")]
+
+    )
+
+    reply_markup = InlineKeyboardMarkup(nav_buttons)
+
+    file_id = media["file_id"]
+
+    title = media["title"]
+
+    file_type = media["type"]
+
+    # VIDEO
+    if file_type == "video":
+
+        await query.message.reply_video(
+
+            video=file_id,
+
+            caption=f"🎬 {title}",
+
+            reply_markup=reply_markup
+
+        )
+
+    # PHOTO
+    elif file_type == "photo":
+
+        await query.message.reply_photo(
+
+            photo=file_id,
+
+            caption=f"🖼 {title}",
+
+            reply_markup=reply_markup
+
+        )
+
+    # DOCUMENT
     else:
 
-        category = data.split("_")[0]
+        await query.message.reply_document(
 
-        index = int(data.split("_")[1])
+            document=file_id,
 
-        media_list = db.get(category, [])
+            caption=f"📁 {title}",
 
-        if len(media_list) == 0:
+            reply_markup=reply_markup
 
-            await query.message.reply_text(
-                "❌ No Media Found"
-            )
-
-            return
-
-        media = media_list[index]
-
-        keyboard = []
-
-        if index > 0:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏮ Previous",
-                    callback_data=f"{category}_{index-1}"
-                )
-            )
-
-        if index < len(media_list) - 1:
-
-            keyboard.append(
-                InlineKeyboardButton(
-                    "⏭ Next",
-                    callback_data=f"{category}_{index+1}"
-                )
-            )
-
-        nav_buttons = [keyboard]
-
-        nav_buttons.append(
-            [InlineKeyboardButton("🔙 Back", callback_data="back")]
         )
 
-        reply_markup = InlineKeyboardMarkup(nav_buttons)
-
-        file_id = media["file_id"]
-
-        title = media["title"]
-
-        file_type = media["type"]
-
-        # VIDEO
-        if file_type == "video":
-
-            await query.message.reply_video(
-                video=file_id,
-                caption=f"🎬 {title}",
-                reply_markup=reply_markup
-            )
-
-        # PHOTO
-        elif file_type == "photo":
-
-            await query.message.reply_photo(
-                photo=file_id,
-                caption=f"🖼 {title}",
-                reply_markup=reply_markup
-            )
-
-        # DOCUMENT
-        else:
-
-            await query.message.reply_document(
-                document=file_id,
-                caption=f"📁 {title}",
-                reply_markup=reply_markup
-            )
-
 # =====================================================
-#                 SEARCH SYSTEM
+#                SEARCH SYSTEM
 # =====================================================
 
-async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text.lower()
 
-    # PASSWORD SYSTEM
+    # PASSWORD
     if context.user_data.get("waiting_for_password"):
 
-        password = update.message.text
-
-        if password == COLLECTION_PASSWORD:
+        if text == COLLECTION_PASSWORD:
 
             context.user_data["waiting_for_password"] = False
 
             keyboard = [
 
                 [
+
                     InlineKeyboardButton(
+
                         "🔥 Open Collection",
+
                         callback_data="collection_0"
+
                     )
+
                 ]
 
             ]
@@ -291,50 +343,57 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup = InlineKeyboardMarkup(keyboard)
 
             await update.message.reply_text(
+
                 "✅ Collection Unlocked",
+
                 reply_markup=reply_markup
+
             )
 
         else:
 
             await update.message.reply_text(
+
                 "❌ Wrong Password"
+
             )
 
         return
 
-    # SEARCH DATABASE
-    db = load_database()
+    # SEARCH
+    media_list = list(media_collection.find())
 
     results = []
 
-    for category in db:
+    for media in media_list:
 
-        for media in db[category]:
+        score = fuzz.partial_ratio(
 
-            score = fuzz.partial_ratio(
-                text,
-                media["title"].lower()
-            )
+            text,
 
-            if score > 70:
+            media["title"].lower()
 
-                results.append(media)
+        )
 
-    # NO RESULT
+        if score > 70:
+
+            results.append(media)
+
     if len(results) == 0:
 
         await update.message.reply_text(
+
             "❌ No Result Found"
+
         )
 
         return
 
     await update.message.reply_text(
+
         f"🔍 Found {len(results)} Result"
     )
 
-    # SEND RESULT
     for media in results:
 
         file_id = media["file_id"]
@@ -346,52 +405,61 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if file_type == "video":
 
             await update.message.reply_video(
+
                 video=file_id,
+
                 caption=f"🎬 {title}"
+
             )
 
         elif file_type == "photo":
 
             await update.message.reply_photo(
+
                 photo=file_id,
+
                 caption=f"🖼 {title}"
+
             )
 
         else:
 
             await update.message.reply_document(
+
                 document=file_id,
+
                 caption=f"📁 {title}"
+
             )
 
 # =====================================================
 #                FILE ID GETTER
 # =====================================================
 
-async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if update.message.video:
 
-        file_id = update.message.video.file_id
-
         await update.message.reply_text(
-            f"🎬 VIDEO FILE ID 👇\n\n{file_id}"
+
+            update.message.video.file_id
+
         )
 
     elif update.message.photo:
 
-        file_id = update.message.photo[-1].file_id
-
         await update.message.reply_text(
-            f"🖼 PHOTO FILE ID 👇\n\n{file_id}"
+
+            update.message.photo[-1].file_id
+
         )
 
     elif update.message.document:
 
-        file_id = update.message.document.file_id
-
         await update.message.reply_text(
-            f"📁 DOCUMENT FILE ID 👇\n\n{file_id}"
+
+            update.message.document.file_id
+
         )
 
 # =====================================================
@@ -403,9 +471,8 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
 
         if not update.channel_post:
-            return
 
-        db = load_database()
+            return
 
         post = update.channel_post
 
@@ -416,18 +483,23 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
         category = "movie"
 
         if "natok" in lower_caption:
+
             category = "natok"
 
         elif "collection" in lower_caption:
+
             category = "collection"
 
         elif "photo" in lower_caption:
+
             category = "photo"
 
         elif "game" in lower_caption:
+
             category = "game"
 
         elif "software" in lower_caption:
+
             category = "software"
 
         media = None
@@ -436,43 +508,59 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if post.video:
 
             media = {
+
                 "file_id": post.video.file_id,
+
                 "title": caption,
-                "type": "video"
+
+                "type": "video",
+
+                "category": category
+
             }
 
         # PHOTO
         elif post.photo:
 
             media = {
+
                 "file_id": post.photo[-1].file_id,
+
                 "title": caption,
-                "type": "photo"
+
+                "type": "photo",
+
+                "category": category
+
             }
 
         # DOCUMENT
         elif post.document:
 
             media = {
+
                 "file_id": post.document.file_id,
+
                 "title": caption,
-                "type": "document"
+
+                "type": "document",
+
+                "category": category
+
             }
 
         if media:
 
-            db[category].append(media)
+            media_collection.insert_one(media)
 
-            save_database(db)
-
-            print(f"✅ Auto Saved In {category}")
+            print(f"✅ Saved In MongoDB → {category}")
 
     except Exception as e:
 
         print("AUTO UPLOAD ERROR:", e)
 
 # =====================================================
-#                     MAIN SYSTEM
+#                   MAIN SYSTEM
 # =====================================================
 
 app = Application.builder().token(TOKEN).build()
@@ -480,42 +568,63 @@ app = Application.builder().token(TOKEN).build()
 # START
 app.add_handler(CommandHandler("start", start))
 
-# USER COUNT
+# USERS
 app.add_handler(CommandHandler("users", users))
 
-# BUTTON SYSTEM
+# BUTTONS
 app.add_handler(CallbackQueryHandler(button))
 
-# SEARCH SYSTEM
+# SEARCH
 app.add_handler(
+
     MessageHandler(
+
         filters.TEXT & ~filters.COMMAND,
-        search_system
+
+        search
+
     )
+
 )
 
-# FILE ID GETTER
+# FILE ID
 app.add_handler(
+
     MessageHandler(
+
         filters.VIDEO |
+
         filters.PHOTO |
+
         filters.Document.ALL,
-        get_file_id
+
+        file_id
+
     )
+
 )
 
 # AUTO UPLOAD
 app.add_handler(
+
     MessageHandler(
+
         filters.ALL,
+
         auto_upload
+
     )
+
 )
 
-print("✅ Advanced Professional Bot Running...")
+print("✅ MongoDB Professional Bot Running...")
 
 app.run_polling(
+
     drop_pending_updates=True,
+
     allowed_updates=Update.ALL_TYPES,
+
     close_loop=False
+
 )
