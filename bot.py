@@ -9,24 +9,24 @@ from telegram.ext import (
 )
 
 # =====================================================
-#                    BOT TOKEN
+#                     BOT TOKEN
 # =====================================================
 
 TOKEN = "8971545585:AAE-5zg03r0ueBmj1bG4UKxxZGRpsuYktiA"
 
 
 # =====================================================
-#                TELEGRAM VIDEO FILE IDs
+#               YOUR TELEGRAM FILE IDs
 # =====================================================
 
-# 🎭 Natok Videos
-NATOK_1 = "PUT_NATOK_FILE_ID"
+# 🎭 Natok Video
+NATOK_VIDEO = "PUT_NATOK_FILE_ID"
 
-# 🎬 Movie Videos
-MOVIE_1 = "PUT_MOVIE_FILE_ID"
+# 🎬 Movie Video
+MOVIE_VIDEO = "PUT_MOVIE_FILE_ID"
 
-# 😁 Collection Videos
-COLLECTION_1 = "PUT_COLLECTION_FILE_ID"
+# 😁 Collection Video
+COLLECTION_VIDEO = "PUT_COLLECTION_FILE_ID"
 
 
 # =====================================================
@@ -41,34 +41,28 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         [InlineKeyboardButton("🎬 Movie", callback_data="movie")],
 
-        [InlineKeyboardButton("😁 Collection", callback_data="collection")],
-
-        [InlineKeyboardButton("📺 Web Series", callback_data="series")],
-
-        [InlineKeyboardButton("🔥 Trending", callback_data="trending")],
-
-        [InlineKeyboardButton("😂 Funny Clips", callback_data="funny")]
+        [InlineKeyboardButton("😁 Collection", callback_data="collection")]
 
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    welcome_text = """
+    text = """
 🎬 Welcome To Video Collection 🎬
 
-📁 সকল ধরনের ভিডিও এখানে পাবেন।
+📁 এখানে সকল ধরনের ভিডিও পাবেন।
 
-👇 নিচের অপশন থেকে সিলেক্ট করুন
+👇 নিচের অপশন সিলেক্ট করুন
 """
 
     await update.message.reply_text(
-        welcome_text,
+        text,
         reply_markup=reply_markup
     )
 
 
 # =====================================================
-#                  BUTTON SYSTEM
+#                    BUTTON SYSTEM
 # =====================================================
 
 async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -84,7 +78,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if query.data == "natok":
 
         await query.message.reply_video(
-            video=NATOK_1,
+            video=NATOK_VIDEO,
             caption="""
 🎭 Natok Collection
 
@@ -101,7 +95,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "movie":
 
         await query.message.reply_video(
-            video=MOVIE_1,
+            video=MOVIE_VIDEO,
             caption="""
 🎬 Movie Collection
 
@@ -118,61 +112,19 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "collection":
 
         await query.message.reply_video(
-            video=COLLECTION_1,
+            video=COLLECTION_VIDEO,
             caption="""
-😁 Video Collection
+😁 Collection Videos
 
 ✅ Viral Videos
-✅ Social Clips
-✅ Short Videos
-"""
-        )
-
-    # ==========================================
-    # Web Series
-    # ==========================================
-
-    elif query.data == "series":
-
-        await query.message.reply_text(
-            """
-📺 Web Series Collection
-
-🔥 Coming Soon...
-"""
-        )
-
-    # ==========================================
-    # Trending
-    # ==========================================
-
-    elif query.data == "trending":
-
-        await query.message.reply_text(
-            """
-🔥 Trending Videos
-
-🚀 Coming Soon...
-"""
-        )
-
-    # ==========================================
-    # Funny Clips
-    # ==========================================
-
-    elif query.data == "funny":
-
-        await query.message.reply_text(
-            """
-😂 Funny Clips
-
-🤣 Coming Soon...
+✅ Funny Clips
+✅ Trending Videos
 """
         )
 
 
 # =====================================================
-#               FILE ID GET SYSTEM
+#                 FILE ID GETTER SYSTEM
 # =====================================================
 
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -205,7 +157,7 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # =====================================================
-#                     MAIN SYSTEM
+#                      MAIN
 # =====================================================
 
 app = Application.builder().token(TOKEN).build()
@@ -213,7 +165,7 @@ app = Application.builder().token(TOKEN).build()
 # Start Command
 app.add_handler(CommandHandler("start", start))
 
-# Button System
+# Button Click System
 app.add_handler(CallbackQueryHandler(button))
 
 # File ID Getter
