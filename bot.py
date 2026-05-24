@@ -549,7 +549,7 @@ app.add_handler(
 # AUTO UPLOAD
 app.add_handler(
     MessageHandler(
-        filters.UpdateType.CHANNEL_POST,
+        filters.ALL,
         auto_upload
     )
 )
