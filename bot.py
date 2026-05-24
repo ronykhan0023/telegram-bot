@@ -109,9 +109,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 ━━━━━━━━━━━━━━━━━━
 
-🔍 Search Supported
-🔐 Password Protected
-⚡ Auto Upload System
+🔍 Smart Search Enabled
+⚡ Auto Upload Enabled
+🔐 Collection Password Enabled
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -321,9 +321,7 @@ async def search_system(update: Update, context: ContextTypes.DEFAULT_TYPE):
         else:
 
             await update.message.reply_text(
-                """
-❌ Wrong Password
-"""
+                "❌ Wrong Password"
             )
 
         return
@@ -450,10 +448,6 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             return
 
-        # =================================================
-        # CATEGORY DETECT
-        # =================================================
-
         category = "movie"
 
         lower_caption = caption.lower()
@@ -478,10 +472,7 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             category = "software"
 
-        # =================================================
         # VIDEO
-        # =================================================
-
         if update.channel_post.video:
 
             file_id = update.channel_post.video.file_id
@@ -494,10 +485,7 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             })
 
-        # =================================================
         # PHOTO
-        # =================================================
-
         elif update.channel_post.photo:
 
             file_id = update.channel_post.photo[-1].file_id
@@ -510,10 +498,7 @@ async def auto_upload(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             })
 
-        # =================================================
         # DOCUMENT
-        # =================================================
-
         elif update.channel_post.document:
 
             file_id = update.channel_post.document.file_id
@@ -571,4 +556,6 @@ app.add_handler(
 
 print("✅ Advanced Professional Bot Running...")
 
-app.run_polling()
+app.run_polling(
+    allowed_updates=Update.ALL_TYPES
+)
