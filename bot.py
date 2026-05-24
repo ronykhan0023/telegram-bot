@@ -38,7 +38,7 @@ MOVIE_VIDEOS = [
 
 # 😁 Collection Videos
 COLLECTION_VIDEOS = [
-    "BAACAgIAAxkBAAO6ahK1C-fpqcpgg92U42S3HULtlDYAAg2qAAI_g2FIjsraj3BRH6k7BA",
+    "Put video id",
     "PUT_COLLECTION_FILE_ID_2"
 ]
 
