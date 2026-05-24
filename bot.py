@@ -21,7 +21,7 @@ import json
 #                     BOT TOKEN
 # =====================================================
 
-TOKEN = "8971545585:AAHNJGwWJbzgEofYTd5qEJ4CQBpjCXkbksg"
+TOKEN = "8971545585:AAGkzm1tQJvuBIBh-VAsKFFfmsbqTjDKMJ8"
 
 # =====================================================
 #               COLLECTION PASSWORD
