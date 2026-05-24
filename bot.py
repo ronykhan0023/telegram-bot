@@ -9,6 +9,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("🎭 Natok", callback_data="natok")],
         [InlineKeyboardButton("🎬 Movie", callback_data="movie")]
+        [InlineKeyboardButton("😁 Collection", callback_data="Collection")]
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
