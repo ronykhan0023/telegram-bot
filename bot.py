@@ -1,4 +1,9 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Update
+)
+
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -16,47 +21,49 @@ TOKEN = "8971545585:AAHNJGwWJbzgEofYTd5qEJ4CQBpjCXkbksg"
 
 
 # =====================================================
+#                ADMIN USER ID
+# =====================================================
+
+ADMIN_ID = 7727343195
+
+
+# =====================================================
 #               TELEGRAM VIDEO FILE IDs
 # =====================================================
 
-# 🎭 Natok Video
-NATOK_VIDEO_1 = "PUT_NATOK_FILE_ID"
+NATOK_VIDEOS = [
+    "PUT_NATOK_FILE_ID_1",
+    "PUT_NATOK_FILE_ID_2"
+]
 
-# 🎬 Movie Video
-MOVIE_VIDEO_1 = "PUT_MOVIE_FILE_ID"
+MOVIE_VIDEOS = [
+    "PUT_MOVIE_FILE_ID_1",
+    "PUT_MOVIE_FILE_ID_2"
+]
 
-# 😁 Collection Video
-COLLECTION_VIDEO_1 = "PUT_COLLECTION_FILE_ID"
-
-# 📺 Web Series
-SERIES_VIDEO_1 = "PUT_SERIES_FILE_ID"
-
-# 🔥 Trending
-TRENDING_VIDEO_1 = "PUT_TRENDING_FILE_ID"
-
-# 😂 Funny Clips
-FUNNY_VIDEO_1 = "PUT_FUNNY_FILE_ID"
+COLLECTION_VIDEOS = [
+    "PUT_COLLECTION_FILE_ID_1",
+    "PUT_COLLECTION_FILE_ID_2"
+]
 
 
 # =====================================================
-#                    START COMMAND
+#                  START COMMAND
 # =====================================================
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     keyboard = [
 
-        [InlineKeyboardButton("🎭 Natok", callback_data="natok")],
+        [InlineKeyboardButton("🎭 Natok", callback_data="natok_0")],
 
-        [InlineKeyboardButton("🎬 Movie", callback_data="movie")],
+        [InlineKeyboardButton("🎬 Movie", callback_data="movie_0")],
 
-        [InlineKeyboardButton("😁 Collection", callback_data="collection")],
+        [InlineKeyboardButton("😁 Collection", callback_data="collection_0")],
 
-        [InlineKeyboardButton("📺 Web Series", callback_data="series")],
+        [InlineKeyboardButton("🔎 Search", callback_data="search")],
 
-        [InlineKeyboardButton("🔥 Trending", callback_data="trending")],
-
-        [InlineKeyboardButton("😂 Funny Clips", callback_data="funny")]
+        [InlineKeyboardButton("👨‍💻 Admin Panel", callback_data="admin")]
 
     ]
 
@@ -67,13 +74,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 ━━━━━━━━━━━━━━━━━━
 
-🔥 Premium Video Collection Bot
+🔥 Professional Video Bot
 
 ✅ Natok
 ✅ Movie
-✅ Funny Clips
-✅ Trending Videos
-✅ Web Series
+✅ Collection
+✅ Search System
+✅ Next / Previous
+✅ Back Button
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -96,158 +104,259 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await query.answer()
 
+    data = query.data
 
-    # ==========================================
-    # Natok
-    # ==========================================
 
-    if query.data == "natok":
+    # =================================================
+    # BACK BUTTON
+    # =================================================
+
+    if data == "back":
+
+        keyboard = [
+
+            [InlineKeyboardButton("🎭 Natok", callback_data="natok_0")],
+
+            [InlineKeyboardButton("🎬 Movie", callback_data="movie_0")],
+
+            [InlineKeyboardButton("😁 Collection", callback_data="collection_0")],
+
+            [InlineKeyboardButton("🔎 Search", callback_data="search")]
+
+        ]
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        await query.message.reply_text(
+            "🔙 Main Menu",
+            reply_markup=reply_markup
+        )
+
+
+    # =================================================
+    # NATOK SYSTEM
+    # =================================================
+
+    elif data.startswith("natok_"):
+
+        index = int(data.split("_")[1])
+
+        keyboard = []
+
+        # Previous Button
+        if index > 0:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏮ Previous",
+                    callback_data=f"natok_{index-1}"
+                )
+            )
+
+        # Next Button
+        if index < len(NATOK_VIDEOS) - 1:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏭ Next",
+                    callback_data=f"natok_{index+1}"
+                )
+            )
+
+        nav_buttons = [keyboard]
+
+        # Back Button
+        nav_buttons.append(
+            [InlineKeyboardButton("🔙 Back", callback_data="back")]
+        )
+
+        reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_video(
-            video=NATOK_VIDEO_1,
-            caption="""
-🎭 Bangla Natok Collection
+            video=NATOK_VIDEOS[index],
+            caption=f"""
+🎭 Natok Collection
 
-━━━━━━━━━━━━━━━━━━
-
-✅ Romantic Natok
-✅ Funny Natok
-✅ Emotional Natok
-
-━━━━━━━━━━━━━━━━━━
+📁 Video Number: {index+1}
 
 🔥 Enjoy Your Video
-"""
+""",
+            reply_markup=reply_markup
         )
 
 
-    # ==========================================
-    # Movie
-    # ==========================================
+    # =================================================
+    # MOVIE SYSTEM
+    # =================================================
 
-    elif query.data == "movie":
+    elif data.startswith("movie_"):
+
+        index = int(data.split("_")[1])
+
+        keyboard = []
+
+        if index > 0:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏮ Previous",
+                    callback_data=f"movie_{index-1}"
+                )
+            )
+
+        if index < len(MOVIE_VIDEOS) - 1:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏭ Next",
+                    callback_data=f"movie_{index+1}"
+                )
+            )
+
+        nav_buttons = [keyboard]
+
+        nav_buttons.append(
+            [InlineKeyboardButton("🔙 Back", callback_data="back")]
+        )
+
+        reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_video(
-            video=MOVIE_VIDEO_1,
-            caption="""
+            video=MOVIE_VIDEOS[index],
+            caption=f"""
 🎬 Movie Collection
 
-━━━━━━━━━━━━━━━━━━
-
-✅ Bangla Movie
-✅ Hindi Movie
-✅ English Movie
-
-━━━━━━━━━━━━━━━━━━
+📁 Video Number: {index+1}
 
 🍿 Enjoy Your Movie
-"""
+""",
+            reply_markup=reply_markup
         )
 
 
-    # ==========================================
-    # Collection
-    # ==========================================
+    # =================================================
+    # COLLECTION SYSTEM
+    # =================================================
 
-    elif query.data == "collection":
+    elif data.startswith("collection_"):
+
+        index = int(data.split("_")[1])
+
+        keyboard = []
+
+        if index > 0:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏮ Previous",
+                    callback_data=f"collection_{index-1}"
+                )
+            )
+
+        if index < len(COLLECTION_VIDEOS) - 1:
+
+            keyboard.append(
+                InlineKeyboardButton(
+                    "⏭ Next",
+                    callback_data=f"collection_{index+1}"
+                )
+            )
+
+        nav_buttons = [keyboard]
+
+        nav_buttons.append(
+            [InlineKeyboardButton("🔙 Back", callback_data="back")]
+        )
+
+        reply_markup = InlineKeyboardMarkup(nav_buttons)
 
         await query.message.reply_video(
-            video=COLLECTION_VIDEO_1,
-            caption="""
+            video=COLLECTION_VIDEOS[index],
+            caption=f"""
 😁 Collection Videos
 
-━━━━━━━━━━━━━━━━━━
-
-✅ Viral Videos
-✅ Trending Clips
-✅ Social Videos
-
-━━━━━━━━━━━━━━━━━━
+📁 Video Number: {index+1}
 
 🔥 Enjoy Your Collection
+""",
+            reply_markup=reply_markup
+        )
+
+
+    # =================================================
+    # SEARCH SYSTEM
+    # =================================================
+
+    elif data == "search":
+
+        await query.message.reply_text(
+            """
+🔎 Search System
+
+Movie/Natok Name লিখুন।
 """
         )
 
 
-    # ==========================================
-    # Web Series
-    # ==========================================
+    # =================================================
+    # ADMIN PANEL
+    # =================================================
 
-    elif query.data == "series":
+    elif data == "admin":
 
-        await query.message.reply_video(
-            video=SERIES_VIDEO_1,
-            caption="""
-📺 Web Series Collection
+        if query.from_user.id != ADMIN_ID:
 
-━━━━━━━━━━━━━━━━━━
+            await query.message.reply_text(
+                "❌ Only Admin Can Access"
+            )
 
-✅ Bangla Series
-✅ Hindi Series
-✅ English Series
+            return
 
-━━━━━━━━━━━━━━━━━━
+        await query.message.reply_text(
+            """
+👨‍💻 Admin Panel
 
-🔥 Enjoy Your Series
-"""
-        )
-
-
-    # ==========================================
-    # Trending
-    # ==========================================
-
-    elif query.data == "trending":
-
-        await query.message.reply_video(
-            video=TRENDING_VIDEO_1,
-            caption="""
-🔥 Trending Videos
-
-━━━━━━━━━━━━━━━━━━
-
-✅ Viral Content
-✅ Trending Reels
-✅ Popular Videos
-
-━━━━━━━━━━━━━━━━━━
-
-🚀 Trending Now
-"""
-        )
-
-
-    # ==========================================
-    # Funny Clips
-    # ==========================================
-
-    elif query.data == "funny":
-
-        await query.message.reply_video(
-            video=FUNNY_VIDEO_1,
-            caption="""
-😂 Funny Clips
-
-━━━━━━━━━━━━━━━━━━
-
-🤣 Meme Videos
-🤣 Funny Clips
-🤣 Comedy Shorts
-
-━━━━━━━━━━━━━━━━━━
-
-😆 Enjoy Fun Time
+✅ Upload Videos
+✅ Delete Videos
+✅ Broadcast Message
+✅ User Statistics
 """
         )
 
 
 # =====================================================
-#               FILE ID GETTER SYSTEM
+#                  SEARCH SYSTEM
+# =====================================================
+
+async def search(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    text = update.message.text.lower()
+
+    if "movie" in text:
+
+        await update.message.reply_text(
+            "🎬 Movie Found"
+        )
+
+    elif "natok" in text:
+
+        await update.message.reply_text(
+            "🎭 Natok Found"
+        )
+
+    else:
+
+        await update.message.reply_text(
+            "❌ No Result Found"
+        )
+
+
+# =====================================================
+#                FILE ID GETTER SYSTEM
 # =====================================================
 
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    # Video File ID
     if update.message.video:
 
         file_id = update.message.video.file_id
@@ -255,26 +364,6 @@ async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(
             f"""
 🎬 YOUR VIDEO FILE ID 👇
-
-━━━━━━━━━━━━━━━━━━
-
-{file_id}
-
-━━━━━━━━━━━━━━━━━━
-
-✅ Copy This File ID
-"""
-        )
-
-
-    # Document File ID
-    elif update.message.document:
-
-        file_id = update.message.document.file_id
-
-        await update.message.reply_text(
-            f"""
-📁 YOUR FILE ID 👇
 
 ━━━━━━━━━━━━━━━━━━
 
@@ -302,8 +391,16 @@ app.add_handler(CallbackQueryHandler(button))
 # File ID Getter
 app.add_handler(
     MessageHandler(
-        filters.VIDEO | filters.Document.ALL,
+        filters.VIDEO,
         get_file_id
+    )
+)
+
+# Search System
+app.add_handler(
+    MessageHandler(
+        filters.TEXT & ~filters.COMMAND,
+        search
     )
 )
 
